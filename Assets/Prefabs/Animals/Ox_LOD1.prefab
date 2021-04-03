@@ -139,6 +139,8 @@ GameObject:
   - component: {fileID: 3367351770997334142}
   - component: {fileID: 4991349442545467075}
   - component: {fileID: 7911695664795565456}
+  - component: {fileID: 3441860101879570596}
+  - component: {fileID: -2384453635731879861}
   m_Layer: 0
   m_Name: Ox_LOD1
   m_TagString: Untagged
@@ -212,6 +214,42 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _id: 8
+  _countColor: {r: 0.40000004, g: 0.28235295, b: 0.227451, a: 1}
+--- !u!195 &3441860101879570596
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3367351771004752814}
+  m_Enabled: 0
+  m_AgentTypeID: 0
+  m_Radius: 1.5
+  m_Speed: 50
+  m_Acceleration: 100
+  avoidancePriority: 50
+  m_AngularSpeed: 100
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
+--- !u!65 &-2384453635731879861
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3367351771004752814}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &3367351771004752816
 GameObject:
   m_ObjectHideFlags: 0

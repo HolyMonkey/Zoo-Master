@@ -9,6 +9,7 @@ using UnityEngine.AI;
 public class Animal : MonoBehaviour
 {
     [SerializeField] private int _id;
+    [SerializeField] private Color _countColor;
 
     private Animator _animator;
     private Outline _outline;
@@ -17,16 +18,35 @@ public class Animal : MonoBehaviour
     private Damping _errorDamp= new Damping(0.1f, 5, 0, 1);
 
     private Coroutine _moveTask;
+    private Coroutine _rotateTask;
     private Coroutine _pressTask;
     private Coroutine _shakeTask;
 
     public int ID => _id;
+    public Color CountColor => _countColor;
 
     private void Awake()
     {
         _animator = GetComponent<Animator>();
         _outline = GetComponent<Outline>();
         _agent = GetComponent<NavMeshAgent>();
+    }
+
+    private void Start()
+    {
+        StartCoroutine(RandomIdle());
+    }
+
+    private IEnumerator RandomIdle()
+    {
+        while (enabled)
+        {
+            yield return new WaitForSeconds(Random.Range(5f, 10f));
+
+            string[] triggers = new string[] { "lookLeft", "lookRight", "munch", "munch", "munch", "munch", "munch", "munch" };
+            _animator.SetTrigger(triggers[Random.Range(0, triggers.Length)]);
+
+        }
     }
 
     public void Select()
@@ -51,12 +71,16 @@ public class Animal : MonoBehaviour
         _shakeTask = StartCoroutine(ShowShake());
     }
 
-    public void Go(Vector3 targetPosition, float duration, float delay = 0)
+    public void Go(Vector3 targetPosition, float duration)
     {
         if (_moveTask != null)
             StopCoroutine(_moveTask);
 
-        _moveTask = StartCoroutine(Move(targetPosition, delay, duration));
+        if (_rotateTask != null)
+            StopCoroutine(_rotateTask);
+
+        _moveTask = StartCoroutine(Move(targetPosition, duration));
+        _rotateTask = StartCoroutine(RotateBack(0.25f, duration));
     }
 
     public void Navigate(Vector3 targetPosition)
@@ -65,7 +89,7 @@ public class Animal : MonoBehaviour
         _agent.SetDestination(targetPosition);
     }
 
-    private IEnumerator Move(Vector3 targetPosition, float delay, float duration)
+    private IEnumerator Move(Vector3 targetPosition, float duration, float delay = 0)
     {
         yield return new WaitForSeconds(delay);
 
@@ -74,22 +98,25 @@ public class Animal : MonoBehaviour
         Quaternion rotation = transform.rotation;
         Vector3 delta = targetPosition - position;
         Quaternion targetRotation = delta.magnitude > 0.1f ? Quaternion.LookRotation(targetPosition - position, Vector3.up) : rotation;
-        //_animator.SetBool("isWalking", true);
+
         while (time < duration)
         {
-            transform.position = Vector3.Lerp(position, targetPosition, time / duration);
-            transform.rotation = Quaternion.Lerp(rotation, targetRotation, time / duration * 2);
+            float value = Ease.EaseInEaseOut(time / duration);
+            transform.position = Vector3.Lerp(position, targetPosition, value);
+            transform.rotation = Quaternion.Lerp(rotation, targetRotation, value * 2);
             yield return null;
             time += Time.deltaTime;
         }
         transform.position = transform.position;
-        //_animator.SetBool("isWalking", false);
+    }
 
+    private IEnumerator RotateBack(float duration, float delay = 0)
+    {
+        yield return new WaitForSeconds(delay);
 
-        rotation = transform.rotation;
-        targetRotation = Quaternion.LookRotation(Vector3.back, Vector3.up);
-        duration = 0.25f;
-        time = 0;
+        Quaternion rotation = transform.rotation;
+        Quaternion targetRotation = Quaternion.LookRotation(Vector3.back, Vector3.up);
+        float time = 0;
         while (time < duration)
         {
             transform.rotation = Quaternion.Lerp(rotation, targetRotation, time / duration);
@@ -99,10 +126,23 @@ public class Animal : MonoBehaviour
         transform.rotation = targetRotation;
     }
 
+    public void MoveToAviary(Aviary aviary)
+    {
+        StartCoroutine(Move(aviary.DoorPosition, 0.4f));
+
+        Vector3 delta = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized * 0.2f;
+        StartCoroutine(Move(aviary.transform.position + delta, 0.1f, 0.4f));
+    }
+
     public void MoveTo(Vector3 position)
     {
         if (_agent.enabled)
             _agent.SetDestination(position);
+    }
+
+    public void PlayAnimation(string name)
+    {
+        _animator.SetTrigger(name);
     }
 
     private IEnumerator ShowPress()

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Net : MonoBehaviour
 {
@@ -13,10 +14,16 @@ public class Net : MonoBehaviour
     private List<Node> _nodes = new List<Node>();
     private List<Node> _selectedNodes = new List<Node>();
 
+    public event UnityAction Selected;
+    public event UnityAction Deselected;
+    public event UnityAction<int> AnimalsChanged;
+
     private void Start()
     {
-        for (int i = 0; i < _radius; i++)
-            SpawnCircle(i, i == _radius - 1);
+        //for (int i = 0; i < _radius; i++)
+        //    SpawnCircle(i, i == _radius - 1);
+
+        SpawnGrid(_radius);
 
         foreach (Node node in _nodes)
             node.SetConnected(FindConnected(node));
@@ -69,26 +76,23 @@ public class Net : MonoBehaviour
                             }
                         }
                     }
-
                     nearAnimals.AddRange(newItems);
                 }
 
-                _selectedNodes = nearAnimals;
-
-                foreach (Node item in _nodes)
-                {
-                    if (nearAnimals.Contains(item))
-                        item.Select();
-                    else
-                        item.Deselect();
-                }
+                if (nearAnimals.Count > 0)
+                    Select(nearAnimals);
+                else
+                    Deselect();
             }
             else if (hit.transform.TryGetComponent(out Aviary aviary))
             {
                 if (CanMove(_selectedNodes))
                 {
                     aviary.TakeGroup(_selectedNodes);
-                    CalcMove();
+                    StartCoroutine(CalcMoveAfter(_selectedNodes.Count * 0.1f));
+                    Deselect();
+
+                    AnimalsChanged?.Invoke(GetAnimalsCount());
                 }
                 else
                 {
@@ -99,6 +103,38 @@ public class Net : MonoBehaviour
         }
     }
 
+    private int GetAnimalsCount()
+    {
+        int count = 0;
+        foreach (var item in _nodes)
+            if (item.IsBusy)
+                count++;
+
+        return count;
+    }
+
+    private void Select(List<Node> nodes)
+    {
+        _selectedNodes = nodes;
+
+        foreach (Node item in _nodes)
+            if (nodes.Contains(item))
+                item.Select();
+            else
+                item.Deselect();
+
+        Selected?.Invoke();
+    }
+
+    private void Deselect()
+    {
+        _selectedNodes.Clear();
+        foreach (Node item in _nodes)
+                item.Deselect();
+
+        Deselected?.Invoke();
+    }
+
     private bool CanMove(List<Node> nodes)
     {
         foreach (Node node in nodes)
@@ -106,6 +142,12 @@ public class Net : MonoBehaviour
                 return true;
 
         return false;
+    }
+
+    private IEnumerator CalcMoveAfter(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        CalcMove();
     }
 
     private void CalcMove()
@@ -141,41 +183,33 @@ public class Net : MonoBehaviour
         return _nodes.Where(item => item != node && Vector3.Distance(node.transform.position, item.transform.position) < _distance * 1.1f).ToArray();
     }
 
-    private void SpawnCircle(int radius, bool edge)
+    private void SpawnGrid(int rows)
     {
-        int rows = radius * 2 + 1;
-        int cols = radius + 1;
+        int midRow = rows / 2;
+        int cols = 4;
         float dX = _distance;
         float dZ = Mathf.Sqrt(dX * dX - (dX * dX) / 4);
-        float x0 = -dX * radius / 2;
-        float z0 = -dZ * radius;
+        float z0 = -(rows - 1) * dZ / 2;
         for (int row = 0; row < rows; row++)
         {
             float z = row * dZ;
-            if (row == 0 || row == rows - 1)
-            {
-                for (int col = 0; col < cols; col++)
-                {
-                    float x = dX * col;
-                    Spawn(new Vector3(x0 + x, 0, z0 + z), radius, edge);
-                }
-            }
-            else
-            {
-                int newCols = cols + row - 1;
-                if (row > rows / 2)
-                    newCols = rows - (row - rows / 2) - 1;
+            int newCols = cols + row;
+            if (row > midRow)
+                newCols = cols + midRow + midRow - row;
 
-                float x = newCols * -dX / 2;
-                Spawn(new Vector3(x, 0, z0 + z), radius, edge);
-                Spawn(new Vector3(x + newCols * dX, 0, z0 + z), radius, edge);
+            float x0 = (newCols - 1) * -dX / 2;
+            for (int col = 0; col < newCols; col++)
+            {
+                float x = dX * col;
+                bool isEdge =  row == 0 || row == rows - 1 || col == 0 || col == newCols - 1;
+                Spawn(new Vector3(x0 + x, 0, z0 + z), row * 10 + Mathf.Abs(col - newCols/2), isEdge);
             }
         }
     }
 
     private void Spawn(Vector3 position, int index, bool edge)
     {
-        Node node = Instantiate(_prefab, position, Quaternion.identity);
+        Node node = Instantiate(_prefab, transform.position + position, Quaternion.identity);
         node.Init(index, edge);
         _nodes.Add(node);
     }
