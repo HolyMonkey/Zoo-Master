@@ -20,27 +20,13 @@ public class Net : MonoBehaviour
 
     private void Start()
     {
-        //for (int i = 0; i < _radius; i++)
-        //    SpawnCircle(i, i == _radius - 1);
-
         SpawnGrid(_radius);
 
         foreach (Node node in _nodes)
             node.SetConnected(FindConnected(node));
 
-        List<Node> freeNodes = new List<Node>();
-        foreach (var node in _nodes)
-            freeNodes.Add(node);
-
         foreach (var node in _nodes)
             SpawnAnimal(node);
-
-        //for (int i = 0; i < 10; i++)
-        //{
-        //    int index = Random.Range(0, freeNodes.Count);
-        //    SpawnAnimal(freeNodes[index]);
-        //    freeNodes.RemoveAt(index);
-        //}
     }
 
     private void Update()

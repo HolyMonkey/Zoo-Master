@@ -13,4 +13,9 @@ public static class Ease
     {
         return Mathf.Sin((t - 1) * Mathf.PI / 2) + 1;
     }
+
+    public static float EaseOut(float t)
+    {
+        return Mathf.Sin(t * Mathf.PI / 2);
+    }
 }

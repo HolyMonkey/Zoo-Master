@@ -12,6 +12,8 @@ public class ComboText : MonoBehaviour
     [SerializeField] private TMP_Text _number;
     [SerializeField] private float _maxDelay = 1.5f;
     [SerializeField] private int _minValue = 1;
+    [SerializeField] private float _scaleDelta = 0.02f;
+    [SerializeField] private float _maxScale = 1.1f;
 
     private Damping _dumping = new Damping(0.5f, 3, 0, 1);
     private RectTransform _labelTransform;
@@ -160,11 +162,10 @@ public class ComboText : MonoBehaviour
         _labelTransform.localScale = Vector3.one;
         _numberPanel.localScale = Vector3.one * _numberScale;
 
-        _numberScale += 0.02f;
+        _numberScale += _scaleDelta;
 
-        float maxNumberScale = 1.1f;
-        if (_numberScale > maxNumberScale)
-            _numberScale = maxNumberScale;
+        if (_numberScale > _maxScale)
+            _numberScale = _maxScale;
 
         float duration = 0.5f;
         float time = 0;

@@ -85,6 +85,7 @@ public class Game : MonoBehaviour
             {
                 int score = combo * 10;
                 item.ComboText.Reset();
+                item.PlayConfetti();
                 PopupText plusText = Instantiate(_plusTextPrefab, transform);
                 plusText.transform.position = item.ComboText.transform.position + Vector3.up * 100;
                 plusText.Show("+" + score.ToString());

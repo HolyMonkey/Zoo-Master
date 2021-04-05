@@ -10,7 +10,7 @@ public class PopupText : MonoBehaviour
     [SerializeField] private string[] _content;
     [SerializeField] private TMP_Text _text;
 
-    private Damping _dumping = new Damping(0.5f, 3, 0, 1);
+    private Damping _dumping = new Damping(0.5f, 3, 0, 2);
     private Coroutine _appearTask;
     private Coroutine _disappearTask;
     private Coroutine _disappearDelayTask;

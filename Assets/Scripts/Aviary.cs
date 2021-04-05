@@ -12,6 +12,7 @@ public class Aviary : MonoBehaviour
     [SerializeField] private float _movePerAnimal = 0.1f;
     [SerializeField] private ComboText _comboText;
     [SerializeField] private Image _comboImage;
+    [SerializeField] private ParticleSystem _confetti;
 
     private List<Animal> _animals = new List<Animal>();
 
@@ -22,6 +23,11 @@ public class Aviary : MonoBehaviour
     public void OpenDoor()
     {
         _door.Open();
+    }
+
+    public void PlayConfetti()
+    {
+        _confetti.Play();
     }
 
     public void CloseDoor(float delay)

@@ -89,7 +89,7 @@ public class Animal : MonoBehaviour
         _agent.SetDestination(targetPosition);
     }
 
-    private IEnumerator Move(Vector3 targetPosition, float duration, float delay = 0)
+    private IEnumerator Move(Vector3 targetPosition, float duration, float delay = 0, string ease = "easeInOut")
     {
         yield return new WaitForSeconds(delay);
 
@@ -101,7 +101,19 @@ public class Animal : MonoBehaviour
 
         while (time < duration)
         {
-            float value = Ease.EaseInEaseOut(time / duration);
+            float value = time / duration;
+            switch (ease)
+            {
+                case "easeInOut":
+                    value = Ease.EaseInEaseOut(value);
+                    break;
+                case "easeIn":
+                    value = Ease.EaseIn(value);
+                    break;
+                case "easeOut":
+                    value = Ease.EaseOut(value);
+                    break;
+            }
             transform.position = Vector3.Lerp(position, targetPosition, value);
             transform.rotation = Quaternion.Lerp(rotation, targetRotation, value * 2);
             yield return null;
@@ -128,10 +140,17 @@ public class Animal : MonoBehaviour
 
     public void MoveToAviary(Aviary aviary)
     {
-        StartCoroutine(Move(aviary.DoorPosition, 0.4f));
-
         Vector3 delta = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized * 0.2f;
-        StartCoroutine(Move(aviary.transform.position + delta, 0.1f, 0.4f));
+        float distanceToDoor = Vector3.Distance(transform.position, aviary.DoorPosition);
+        float distanceToAviary = Vector3.Distance(aviary.DoorPosition, aviary.transform.position + aviary.transform.forward * -1.5f + delta);
+        float totalDuration = 0.4f;
+        float totalDistance = distanceToDoor + distanceToAviary;
+        float toDoorDuration = totalDuration * distanceToDoor / totalDistance;
+        float toAviaryDuration = totalDuration * distanceToAviary / totalDistance;
+
+
+        StartCoroutine(Move(aviary.DoorPosition, toDoorDuration, 0, "easeIn"));
+        StartCoroutine(Move(aviary.transform.position + delta, toAviaryDuration, toDoorDuration, "easeOut"));
     }
 
     public void MoveTo(Vector3 position)
