@@ -11,6 +11,8 @@ public class Game : MonoBehaviour
     [SerializeField] private ComboText _score;
     [SerializeField] private Aviary[] _aviaries;
     [SerializeField] private PopupText _plusTextPrefab;
+    [SerializeField] private RectTransform _canvas;
+    [SerializeField] private Pointer _pointer;
 
     private Aviary _lastAviary;
 
@@ -19,9 +21,16 @@ public class Game : MonoBehaviour
         _net.Selected += OnSelectedAnimals;
         _net.Deselected += OnDeselectedAnimals;
         _net.AnimalsChanged += OnAnimalsChanged;
+        _net.GoodClick += OnClickGood;
+        _net.BadClick += OnClickBad;
         _combo.WillDisappear += DoneCombo;
         foreach (var item in _aviaries)
+        {
             item.GotAnimal += OnGotAnimal;
+            item.NiceMove += ShowNice;
+            item.VeryNiceMove += ShowVeryNice;
+            item.BadMove += ShowBad;
+        }
     }
 
     private void OnDisable()
@@ -29,10 +38,27 @@ public class Game : MonoBehaviour
         _net.Selected -= OnSelectedAnimals;
         _net.Deselected -= OnDeselectedAnimals;
         _net.AnimalsChanged -= OnAnimalsChanged;
+        _net.GoodClick -= OnClickGood;
+        _net.BadClick -= OnClickBad;
         _combo.WillDisappear -= DoneCombo;
         foreach (var item in _aviaries)
+        {
             item.GotAnimal -= OnGotAnimal;
+            item.NiceMove -= ShowNice;
+            item.VeryNiceMove -= ShowVeryNice;
+            item.BadMove -= ShowBad;
+        }
     }
+
+    private void ShowNice() => _pointer.Play("ok");
+
+    private void ShowVeryNice() => _pointer.Play("thumbUp");
+
+    private void ShowBad() => _pointer.Play("angry");
+
+    private void OnClickGood() => _pointer.ResetAngry();
+
+    private void OnClickBad() => _pointer.AddAngry();
 
     private void OnSelectedAnimals()
     {
@@ -49,7 +75,9 @@ public class Game : MonoBehaviour
     private void OnGotAnimal(Aviary aviary)
     {
         _lastAviary = aviary;
-        _combo.transform.position = Camera.main.WorldToScreenPoint(aviary.DoorPosition + aviary.transform.forward * 0.5f);
+
+        Vector3 worldSpacePosition = aviary.DoorPosition + aviary.transform.forward * 2.5f + aviary.transform.up * 4;
+        _combo.transform.position = worldSpacePosition;
         _combo.Increase();
     }
 
@@ -59,19 +87,18 @@ public class Game : MonoBehaviour
         {
             int score = combo * 10;
             if (_lastAviary != null)
-                _plusText.Show(_lastAviary.DoorPosition + _lastAviary.transform.forward * 2f, "+" + score.ToString());
-
+            {
+                _plusText.transform.position = _lastAviary.DoorPosition + _lastAviary.transform.forward * 3.5f + _lastAviary.transform.up * 4.5f;
+                _plusText.Show("+" + score.ToString());
+            }
             StartCoroutine(MovePlusText(_plusText, 0.4f, score));
         }
     }
 
     private void OnAnimalsChanged(int count)
     {
-        Debug.Log(count);
         if (count == 0)
-        {
             StartCoroutine(FinishGame());
-        }
     }
 
     private IEnumerator FinishGame()

@@ -10,6 +10,8 @@ public class Net : MonoBehaviour
     [SerializeField] private float _distance = 3;
     [SerializeField] private int _radius = 5;
     [SerializeField] private AnimalSpawner _spawner;
+    [SerializeField] private Pointer _pointer;
+    [SerializeField] private Aviaries _aviaries;
 
     private List<Node> _nodes = new List<Node>();
     private List<Node> _selectedNodes = new List<Node>();
@@ -17,6 +19,8 @@ public class Net : MonoBehaviour
     public event UnityAction Selected;
     public event UnityAction Deselected;
     public event UnityAction<int> AnimalsChanged;
+    public event UnityAction BadClick;
+    public event UnityAction GoodClick;
 
     private void Start()
     {
@@ -27,11 +31,19 @@ public class Net : MonoBehaviour
 
         foreach (var node in _nodes)
             SpawnAnimal(node);
+
+        _nodes = _nodes.OrderBy(node => node.Index).ToList();
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.B))
+            CalcMove(true, 0);
+
+        if (Input.GetKeyDown(KeyCode.W))
+           StartCoroutine(ShowWave("spin", 0));
+
+        if (Input.GetKeyDown(KeyCode.S))
         {
             if (Time.timeScale == 1)
                 Time.timeScale = 0.1f;
@@ -39,8 +51,25 @@ public class Net : MonoBehaviour
                 Time.timeScale = 1;
         }
 
-        if (Input.GetMouseButtonDown(0) &&
-            Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, 1000))
+        //if (Input.GetMouseButtonDown(0))
+        //    HandleClick(Input.mousePosition);
+    }
+
+    private void OnEnable()
+    {
+        _pointer.Clicked += HandleClick;
+        _aviaries.ReleasedAnimals += TakeAnimalsBack;
+    }
+
+    private void OnDisable()
+    {
+        _pointer.Clicked -= HandleClick;
+        _aviaries.ReleasedAnimals -= TakeAnimalsBack;
+    }
+
+    private void HandleClick(Vector2 mousePosition)
+    {
+        if (Physics.Raycast(Camera.main.ScreenPointToRay(mousePosition), out RaycastHit hit, 1000))
         {
             if (hit.transform.TryGetComponent(out Node node))
             {
@@ -69,24 +98,58 @@ public class Net : MonoBehaviour
                     Select(nearAnimals);
                 else
                     Deselect();
+
+                GoodClick?.Invoke();
             }
             else if (hit.transform.TryGetComponent(out Aviary aviary))
             {
-                if (CanMove(_selectedNodes))
+                if (_selectedNodes.Count > 0)
                 {
-                    aviary.TakeGroup(_selectedNodes);
-                    StartCoroutine(CalcMoveAfter(_selectedNodes.Count * 0.1f));
-                    Deselect();
+                    if (CanMove(_selectedNodes))
+                    {
+                        aviary.TakeGroup(_selectedNodes);
+                        CalcMove(false, _selectedNodes.Count * 0.1f);
+                        Deselect();
 
-                    AnimalsChanged?.Invoke(GetAnimalsCount());
+                        AnimalsChanged?.Invoke(GetAnimalsCount());
+
+                        GoodClick?.Invoke();
+                    }
+                    else
+                    {
+                        foreach (Node item in _selectedNodes)
+                            item.Animal.Shake();
+
+                        BadClick?.Invoke();
+                    }
                 }
-                else
-                {
-                    foreach (Node item in _selectedNodes)
-                        item.Animal.Shake();
-                }
+
             }
         }
+    }
+
+    private IEnumerator ShowWave(string animation, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        foreach (var item in _nodes)
+            if (item.IsBusy)
+                item.Animal.PlayAnimation(animation, 0.05f * item.Row);
+    }
+
+    private void TakeAnimalsBack(List<Animal> animals)
+    {
+        CalcMove(true, 0.2f);
+        for (int i = 0; i < animals.Count; i++)
+            GetNextFreeNode().MakeBusy(animals[i], 0, true);
+
+        CalcMove(false, 0.2f);
+        StartCoroutine(ShowWave("fear", 0.7f));
+    }
+
+    private Node GetNextFreeNode()
+    {
+        return _nodes.FirstOrDefault(node => node.IsBusy == false);
     }
 
     private int GetAnimalsCount()
@@ -124,19 +187,13 @@ public class Net : MonoBehaviour
     private bool CanMove(List<Node> nodes)
     {
         foreach (Node node in nodes)
-            if (node.OnEdge || node.Connected.FirstOrDefault(item => item.IsBusy == false) != null)
+            if (node.OnEdge)
                 return true;
 
         return false;
     }
 
-    private IEnumerator CalcMoveAfter(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        CalcMove();
-    }
-
-    private void CalcMove()
+    private void CalcMove(bool back, float delay)
     {
         bool needUpdate = true;
         while (needUpdate)
@@ -144,7 +201,7 @@ public class Net : MonoBehaviour
             needUpdate = false;
             foreach (var node in _nodes)
             {
-                if (TryUpdateNode(node))
+                if (TryUpdateNode(node, back, delay))
                     needUpdate = true;
             }
         }
@@ -188,31 +245,49 @@ public class Net : MonoBehaviour
             {
                 float x = dX * col;
                 bool isEdge =  row == 0 || row == rows - 1 || col == 0 || col == newCols - 1;
-                Spawn(new Vector3(x0 + x, 0, z0 + z), row * 10 + Mathf.Abs(col - newCols/2), isEdge);
+                Vector3 position = new Vector3(x0 + x, 0, z0 + z);
+                int index = row * 10 + Mathf.Abs(col - newCols / 2);
+                Spawn(position, index, row, isEdge);
             }
         }
     }
 
-    private void Spawn(Vector3 position, int index, bool edge)
+    private void Spawn(Vector3 position, int index, int row, bool edge)
     {
         Node node = Instantiate(_prefab, transform.position + position, Quaternion.identity);
-        node.Init(index, edge);
+        node.Init(index, row, edge);
         _nodes.Add(node);
     }
 
     private void SpawnAnimal(Node node)
     {
-        node.MakeBusy(_spawner.Spawn(node.transform.position));
+        node.MakeBusy(_spawner.Spawn(node.transform.position + Vector3.forward * 20), 0, false);
     }
 
-    private bool TryUpdateNode(Node node)
+    private bool TryUpdateNode(Node node, bool back = false, float delay = 0)
     {
-        if (node.IsBusy && node.TryGetPreferedNode(out Node prefered))
+        if (node.IsBusy)
         {
-            Animal animal = node.Animal;
-            node.Clear();
-            prefered.MakeBusy(animal);
-            return true;
+            if (back)
+            {
+                if (node.TryGetFarNode(out Node prefered))
+                {
+                    Animal animal = node.Animal;
+                    node.Clear();
+                    prefered.MakeBusy(animal, delay, false);
+                    return true;
+                }
+            }
+            else
+            {
+                if (node.TryGetPreferedNode(out Node prefered))
+                {
+                    Animal animal = node.Animal;
+                    node.Clear();
+                    prefered.MakeBusy(animal, delay, false);
+                    return true;
+                }
+            }
         }
 
         return false;

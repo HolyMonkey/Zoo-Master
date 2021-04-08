@@ -16,11 +16,13 @@ public class Node : MonoBehaviour
     public bool OnEdge => _onEdge;
     public Animal Animal => _animal;
     public Node[] Connected => _connectedNodes;
+    public int Row { get; private set; } = 0;
 
-    public void Init(int index, bool edge)
+    public void Init(int index, int row, bool edge)
     {
         _index = index;
         _onEdge = edge;
+        Row = row;
     }
 
     public void SetConnected(Node[] nodes)
@@ -28,10 +30,17 @@ public class Node : MonoBehaviour
         _connectedNodes = nodes;
     }
 
-    public void MakeBusy(Animal animal)
+    public void MakeBusy(Animal animal, float delay, bool fromAviary)
     {
         _animal = animal;
-        _animal.Go(transform.position, 0.5f);
+        if (fromAviary)
+        {
+            _animal.MoveFromAviary(transform.position);
+        }
+        else
+        {
+            _animal.Go(transform.position, 0.5f, delay);
+        }
     }
 
     public void Clear()
@@ -53,6 +62,22 @@ public class Node : MonoBehaviour
         }
 
         return prefered != null;
+    }
+
+    public bool TryGetFarNode(out Node farNode)
+    {
+        int max = _index;
+        farNode = null;
+        foreach (Node node in _connectedNodes)
+        {
+            if (!node.IsBusy && node.Index > max)
+            {
+                max = node.Index;
+                farNode = node;
+            }
+        }
+
+        return farNode != null;
     }
 
     public void Select()

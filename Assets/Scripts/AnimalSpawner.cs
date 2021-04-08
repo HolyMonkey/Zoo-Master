@@ -2,6 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
+public class SpawnAnimals
+{
+
+}
+
 public class AnimalSpawner : MonoBehaviour
 {
     [SerializeField] private Animal[] _prefabs;
@@ -21,16 +27,29 @@ public class AnimalSpawner : MonoBehaviour
 
     //private void Update()
     //{
-    //    if (Input.GetKeyDown(KeyCode.P))
+    //    if (Input.GetKeyDown(KeyCode.Space))
     //    {
-    //        string s = "[";
-    //        for (int i = 0; i < _indices.Count; i++)
-    //        {
-    //            s += _indices[i] + ", ";
-    //        }
-
-    //        s += "]";
     //        Debug.Log(s);
     //    }
+    //}
+
+    //private void WriteString(string data)
+    //{
+    //    string path = "Assets/test.json";
+
+    //    StreamWriter writer = new StreamWriter(path, false);
+    //    writer.Write(data);
+    //    writer.Close();
+    //}
+
+    //private string ReadString()
+    //{
+    //    string path = "Assets/test.json";
+
+    //    StreamReader reader = new StreamReader(path);
+    //    string result = reader.ReadToEnd();
+    //    reader.Close();
+
+    //    return result;
     //}
 }

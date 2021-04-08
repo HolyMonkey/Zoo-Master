@@ -14,11 +14,16 @@ public class Aviary : MonoBehaviour
     [SerializeField] private Image _comboImage;
     [SerializeField] private ParticleSystem _confetti;
 
-    private List<Animal> _animals = new List<Animal>();
+    private Stack<Animal>  _animals = new Stack<Animal>();
 
     public Vector3 DoorPosition => _door.transform.position;
-    public event UnityAction<Aviary> GotAnimal;
     public ComboText ComboText => _comboText;
+
+    public event UnityAction<Aviary> GotAnimal;
+    public event UnityAction<List<Animal>> ReleasedAnimals;
+    public event UnityAction NiceMove;
+    public event UnityAction VeryNiceMove;
+    public event UnityAction BadMove;
 
     public void OpenDoor()
     {
@@ -54,13 +59,14 @@ public class Aviary : MonoBehaviour
 
     private IEnumerator AddAnimalsLoop(List<Animal> animals)
     {
+        bool sameAnimals = _animals.Count == 0 || animals[0].ID == _animals.Peek().ID;
         foreach (var animal in animals)
         {
             MoveAnimalsBack(_movePerAnimal);
 
-            _animals.Add(animal);
-
+            _animals.Push(animal);
             animal.MoveToAviary(this);
+            StartCoroutine(UpdateCounter(GetSameAnimalsInRowCount(), animal.CountColor, 0.3f, sameAnimals));
 
             yield return new WaitForSeconds(0.1f);
         }
@@ -75,6 +81,31 @@ public class Aviary : MonoBehaviour
             animal.MoveTo(animal.transform.position - transform.forward * delta);
     }
 
+    private void MoveAnimalsForward()
+    {
+        float minDistance = 1000;
+        foreach (Animal animal in _animals)
+        {
+            float distance = Vector3.Distance(animal.transform.position, transform.position);
+            if (distance < minDistance)
+                minDistance = distance;
+        }
+
+        foreach (Animal animal in _animals)
+            animal.MoveTo(animal.transform.position + transform.forward * minDistance);
+    }
+
+    private IEnumerator UpdateCounter(int value, Color color, float delay, bool sameAnimals)
+    {
+        yield return new WaitForSeconds(delay);
+
+        _comboImage.color = color;
+        _comboText.QuickReset();
+        _comboText.Increase(value);
+        if (sameAnimals)
+            GotAnimal?.Invoke(this);
+    }
+
     private IEnumerator ReactOnNewAnimals(float delay, List<Animal> newAnimals)
     {
         yield return new WaitForSeconds(delay);
@@ -87,12 +118,29 @@ public class Aviary : MonoBehaviour
                 string animation = newAnimals.Count > 3 ? "spin" : "bounce";
                 foreach (Animal animal in _animals)
                     animal.PlayAnimation(animation);
+
+                if (newAnimals.Count > 4)
+                    VeryNiceMove?.Invoke();
+                else if (newAnimals.Count > 2)
+                    NiceMove?.Invoke();
             }
             else
             {
                 foreach (Animal animal in _animals)
                     animal.PlayAnimation("fear");
+
+                int count = GetSameAnimalsInRowCount();
+                ReleaseAnimals(count);
+
+                BadMove?.Invoke();
             }
+        }
+        else
+        {
+            if (newAnimals.Count > 4)
+                VeryNiceMove?.Invoke();
+            else if (newAnimals.Count > 2)
+                NiceMove?.Invoke();
         }
     }
 
@@ -102,48 +150,42 @@ public class Aviary : MonoBehaviour
         _door.Close();
     }
 
-    private List<Animal> _countedAnimals = new List<Animal>();
-
     private void OnTriggerEnter(Collider other)
     {
-        if (other.TryGetComponent(out NavMeshAgent agent))
-            agent.enabled = true;
-
         if (other.TryGetComponent(out Animal animal))
-        {
-            if (_countedAnimals.Contains(animal) == false)
-            {
-                if (_countedAnimals.Count == 0 || _countedAnimals[_countedAnimals.Count - 1].ID == animal.ID)
-                {
-                    _comboImage.color = animal.CountColor;
-                    _comboText.Increase();
-                }
-                else
-                {
-                    _comboText.QuickReset();
-                    _comboText.Increase();
-                }
-
-                _countedAnimals.Add(animal);
-                GotAnimal?.Invoke(this);
-            }
-        }
+            animal.EnableNavAgent();
     }
 
     private int GetSameAnimalsInRowCount()
     {
         int count = 0;
-        int prevID = -1;
+        int prevID = _animals.Peek().ID;
         foreach (var item in _animals)
         {
             if (item.ID == prevID)
                 count++;
             else
-                count = 0;
-
-            prevID = item.ID;
+                break;
         }
 
         return count;
+    }
+
+    private void ReleaseAnimals(int count)
+    {
+        List<Animal> animals = new List<Animal>();
+        for (int i = 0; i < count; i++)
+        {
+            Animal animal = _animals.Pop();
+            animal.DisableNavAgent();
+            animals.Add(animal);
+        }
+
+        OpenDoor();
+        CloseDoor(1f);
+        MoveAnimalsForward();
+        StartCoroutine(UpdateCounter(GetSameAnimalsInRowCount(), _animals.Peek().CountColor, 0.2f, false));
+
+        ReleasedAnimals?.Invoke(animals);
     }
 }

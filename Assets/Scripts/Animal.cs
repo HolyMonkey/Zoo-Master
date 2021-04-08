@@ -15,7 +15,8 @@ public class Animal : MonoBehaviour
     private Outline _outline;
     private NavMeshAgent _agent;
     private Damping _damp = new Damping(0.5f, 2, 0, 1);
-    private Damping _errorDamp= new Damping(0.1f, 5, 0, 1);
+    private Damping _errorDamp= new Damping(0.1f, 5, 0, 3);
+    private Vector3 _aviaryDoorPosition;
 
     private Coroutine _moveTask;
     private Coroutine _rotateTask;
@@ -65,13 +66,20 @@ public class Animal : MonoBehaviour
 
     public void Shake()
     {
+        PlayAnimation("fear");
         if (_shakeTask != null)
             StopCoroutine(_shakeTask);
 
         _shakeTask = StartCoroutine(ShowShake());
     }
 
-    public void Go(Vector3 targetPosition, float duration)
+    private IEnumerator ShakeAfter(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        Shake();
+    }
+
+    public void Go(Vector3 targetPosition, float duration, float delay)
     {
         if (_moveTask != null)
             StopCoroutine(_moveTask);
@@ -79,15 +87,13 @@ public class Animal : MonoBehaviour
         if (_rotateTask != null)
             StopCoroutine(_rotateTask);
 
-        _moveTask = StartCoroutine(Move(targetPosition, duration));
-        _rotateTask = StartCoroutine(RotateBack(0.25f, duration));
+        _moveTask = StartCoroutine(Move(targetPosition, duration, delay));
+        _rotateTask = StartCoroutine(RotateBack(0.25f, duration + delay));
     }
 
-    public void Navigate(Vector3 targetPosition)
-    {
-        _agent.enabled = true;
-        _agent.SetDestination(targetPosition);
-    }
+    public void EnableNavAgent() => _agent.enabled = true;
+
+    public void DisableNavAgent() => _agent.enabled = false;
 
     private IEnumerator Move(Vector3 targetPosition, float duration, float delay = 0, string ease = "easeInOut")
     {
@@ -122,6 +128,25 @@ public class Animal : MonoBehaviour
         transform.position = transform.position;
     }
 
+    private IEnumerator Stretch(float duration)
+    {
+        Vector3 scale = Vector3.one;
+        Vector3 targetScale = new Vector3(0.75f, 0.8f, 1.5f);
+        float time = 0;
+        while (time < duration)
+        {
+            transform.localScale = Vector3.Lerp(scale, targetScale, GetStretchValue(time / duration));
+            yield return null;
+            time += Time.deltaTime;
+        }
+        transform.localScale = scale;
+    }
+
+    private float GetStretchValue(float x)
+    {
+        return 1 - Mathf.Pow(2 * x - 1, 4);
+    }
+
     private IEnumerator RotateBack(float duration, float delay = 0)
     {
         yield return new WaitForSeconds(delay);
@@ -148,9 +173,27 @@ public class Animal : MonoBehaviour
         float toDoorDuration = totalDuration * distanceToDoor / totalDistance;
         float toAviaryDuration = totalDuration * distanceToAviary / totalDistance;
 
+        _aviaryDoorPosition = aviary.DoorPosition;
 
         StartCoroutine(Move(aviary.DoorPosition, toDoorDuration, 0, "easeIn"));
         StartCoroutine(Move(aviary.transform.position + delta, toAviaryDuration, toDoorDuration, "easeOut"));
+        StartCoroutine(Stretch(totalDuration));
+    }
+
+    public void MoveFromAviary(Vector3 target)
+    {
+        float distanceToDoor = Vector3.Distance(transform.position, _aviaryDoorPosition);
+        float distanceToTarget = Vector3.Distance(_aviaryDoorPosition, target);
+        float totalDuration = 0.4f;
+        float totalDistance = distanceToDoor + distanceToTarget;
+        float toDoorDuration = totalDuration * distanceToDoor / totalDistance;
+        float toTargetDuration = totalDuration * distanceToTarget / totalDistance;
+
+        StartCoroutine(Move(_aviaryDoorPosition, toDoorDuration, 0, "easeIn"));
+        StartCoroutine(Move(target, toTargetDuration, toDoorDuration, "easeOut"));
+        StartCoroutine(Stretch(totalDuration));
+        _rotateTask = StartCoroutine(RotateBack(0.25f, totalDuration));
+
     }
 
     public void MoveTo(Vector3 position)
@@ -159,8 +202,14 @@ public class Animal : MonoBehaviour
             _agent.SetDestination(position);
     }
 
-    public void PlayAnimation(string name)
+    public void PlayAnimation(string name, float delay = 0)
     {
+        StartCoroutine(PlayAnimationAfter(name, delay));
+    }
+
+    private IEnumerator PlayAnimationAfter(string name, float delay)
+    {
+        yield return new WaitForSeconds(delay);
         _animator.SetTrigger(name);
     }
 
