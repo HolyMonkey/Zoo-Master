@@ -166,8 +166,9 @@ public class Animal : MonoBehaviour
     public void MoveToAviary(Aviary aviary)
     {
         Vector3 delta = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized * 0.2f;
+        Vector3 aviaryPosition = aviary.transform.position + aviary.transform.forward * -4f + delta;
         float distanceToDoor = Vector3.Distance(transform.position, aviary.DoorPosition);
-        float distanceToAviary = Vector3.Distance(aviary.DoorPosition, aviary.transform.position + aviary.transform.forward * -1.5f + delta);
+        float distanceToAviary = Vector3.Distance(aviary.DoorPosition, aviaryPosition);
         float totalDuration = 0.4f;
         float totalDistance = distanceToDoor + distanceToAviary;
         float toDoorDuration = totalDuration * distanceToDoor / totalDistance;
@@ -176,7 +177,7 @@ public class Animal : MonoBehaviour
         _aviaryDoorPosition = aviary.DoorPosition;
 
         StartCoroutine(Move(aviary.DoorPosition, toDoorDuration, 0, "easeIn"));
-        StartCoroutine(Move(aviary.transform.position + delta, toAviaryDuration, toDoorDuration, "easeOut"));
+        StartCoroutine(Move(aviaryPosition, toAviaryDuration, toDoorDuration, "easeOut"));
         StartCoroutine(Stretch(totalDuration));
     }
 

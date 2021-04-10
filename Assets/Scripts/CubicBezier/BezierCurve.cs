@@ -24,4 +24,17 @@ public class BezierCurve
                 3 * (1 - t) * Mathf.Pow(t, 2) * _p2 +
                 Mathf.Pow(t, 3) * _p3;
     }
+
+    public float GetLength()
+    {
+        float length = 0;
+        Vector3 lastPoint = _p0;
+        for (float t = 1; t <= 1; t += 0.02f)
+        {
+            Vector3 point = GetPoint(t);
+            length += Vector3.Distance(point, lastPoint);
+            lastPoint = point;
+        }
+        return length;
+    }
 }

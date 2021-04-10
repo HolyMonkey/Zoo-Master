@@ -153,7 +153,14 @@ public class Aviary : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (other.TryGetComponent(out Animal animal))
-            animal.EnableNavAgent();
+            StartCoroutine(EnableNavAgentAfter(animal, 0.1f));
+    }
+
+    private IEnumerator EnableNavAgentAfter(Animal animal, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        animal.EnableNavAgent();
+
     }
 
     private int GetSameAnimalsInRowCount()
