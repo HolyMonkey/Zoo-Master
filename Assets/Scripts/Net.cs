@@ -10,7 +10,7 @@ public class Net : MonoBehaviour
     [SerializeField] private float _distance = 3;
     [SerializeField] private int _radius = 5;
     [SerializeField] private AnimalSpawner _spawner;
-    [SerializeField] private Pointer _pointer;
+    [SerializeField] private HandPointer _pointer;
     [SerializeField] private Aviaries _aviaries;
 
     private List<Node> _nodes = new List<Node>();
@@ -51,19 +51,19 @@ public class Net : MonoBehaviour
                 Time.timeScale = 1;
         }
 
-        //if (Input.GetMouseButtonDown(0))
-        //    HandleClick(Input.mousePosition);
+        if ((_pointer == null || _pointer.gameObject.activeSelf == false) && Input.GetMouseButtonDown(0))
+            HandleClick(Input.mousePosition);
     }
 
     private void OnEnable()
     {
-        _pointer.Clicked += HandleClick;
+        _pointer.MouseDown += HandleClick;
         _aviaries.ReleasedAnimals += TakeAnimalsBack;
     }
 
     private void OnDisable()
     {
-        _pointer.Clicked -= HandleClick;
+        _pointer.MouseDown -= HandleClick;
         _aviaries.ReleasedAnimals -= TakeAnimalsBack;
     }
 

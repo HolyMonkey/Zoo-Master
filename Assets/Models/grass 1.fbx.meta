@@ -1,26 +1,8 @@
 fileFormatVersion: 2
-guid: e8de2c4c37e344996990200e39222b15
+guid: eaddf3a7ae8874e459acc1cea7c82e7d
 ModelImporter:
   serializedVersion: 20200
-  internalIDToNameTable:
-  - first:
-      74: -6238614802773283547
-    second: Armature|Angry
-  - first:
-      74: 5006336019507690301
-    second: Armature|AngryHit
-  - first:
-      74: 4781951162920444690
-    second: Armature|ArmatureAction
-  - first:
-      74: 1488474177270210421
-    second: Armature|Click_angry
-  - first:
-      74: -8887219928387784837
-    second: Armature|Ok
-  - first:
-      74: 148522076362368757
-    second: Armature|ThumbUp
+  internalIDToNameTable: []
   externalObjects: {}
   materials:
     materialImportMode: 2
@@ -52,7 +34,7 @@ ModelImporter:
     isReadable: 0
   meshes:
     lODScreenPercentages: []
-    globalScale: 1
+    globalScale: 100
     meshCompression: 0
     addColliders: 0
     useSRGBMaterialColor: 1

@@ -11,8 +11,8 @@ public class Game : MonoBehaviour
     [SerializeField] private ComboText _score;
     [SerializeField] private Aviary[] _aviaries;
     [SerializeField] private PopupText _plusTextPrefab;
-    [SerializeField] private RectTransform _canvas;
-    [SerializeField] private Pointer _pointer;
+    [SerializeField] private Canvas _canvas;
+    [SerializeField] private HandPointer _pointer;
 
     private Aviary _lastAviary;
 
@@ -76,8 +76,16 @@ public class Game : MonoBehaviour
     {
         _lastAviary = aviary;
 
-        Vector3 worldSpacePosition = aviary.DoorPosition + aviary.transform.forward * 2.5f + aviary.transform.up * 4;
-        _combo.transform.position = worldSpacePosition;
+        if (_canvas.renderMode == RenderMode.ScreenSpaceOverlay)
+        {
+            _combo.transform.position = Camera.main.WorldToScreenPoint(aviary.DoorPosition + aviary.transform.forward * 1.5f);
+        }
+        else
+        {
+            Vector3 worldSpacePosition = aviary.DoorPosition + aviary.transform.forward * 2.5f + aviary.transform.up * 4;
+            _combo.transform.position = worldSpacePosition;
+        }
+        
         _combo.Increase();
     }
 
@@ -88,7 +96,11 @@ public class Game : MonoBehaviour
             int score = combo * 10;
             if (_lastAviary != null)
             {
-                _plusText.transform.position = _lastAviary.DoorPosition + _lastAviary.transform.forward * 3.5f + _lastAviary.transform.up * 4.5f;
+                if (_canvas.renderMode == RenderMode.ScreenSpaceOverlay)
+                    _plusText.transform.position = Camera.main.WorldToScreenPoint(_lastAviary.DoorPosition + _lastAviary.transform.forward * 2.5f);
+                else
+                    _plusText.transform.position = _lastAviary.DoorPosition + _lastAviary.transform.forward * 3.5f + _lastAviary.transform.up * 4.5f;
+
                 _plusText.Show("+" + score.ToString());
             }
             StartCoroutine(MovePlusText(_plusText, 0.4f, score));

@@ -40,7 +40,6 @@ GameObject:
   m_Component:
   - component: {fileID: 975628822741158558}
   - component: {fileID: 720743356367760216}
-  - component: {fileID: 720743356367760217}
   - component: {fileID: 4791501020583468413}
   m_Layer: 0
   m_Name: hand
@@ -84,25 +83,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &720743356367760217
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 486935845688758308}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  outlineMode: 1
-  outlineColor: {r: 0, g: 0, b: 0, a: 1}
-  outlineWidth: 2
-  _stancilID: 2
-  precomputeOutline: 0
-  bakeKeys: []
-  bakeValues: []
 --- !u!114 &4791501020583468413
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -721,7 +701,7 @@ GameObject:
   - component: {fileID: 8408232974831382110}
   - component: {fileID: 1983917562}
   m_Layer: 0
-  m_Name: Hand
+  m_Name: DefaultHand
   m_TagString: Untagged
   m_Icon: {fileID: -5442936267250999957, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0

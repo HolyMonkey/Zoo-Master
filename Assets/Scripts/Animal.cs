@@ -99,6 +99,7 @@ public class Animal : MonoBehaviour
     {
         yield return new WaitForSeconds(delay);
 
+        _animator.SetBool("isMoving", true);
         float time = 0;
         Vector3 position = transform.position;
         Quaternion rotation = transform.rotation;
@@ -126,6 +127,7 @@ public class Animal : MonoBehaviour
             time += Time.deltaTime;
         }
         transform.position = transform.position;
+        _animator.SetBool("isMoving", false);
     }
 
     private IEnumerator Stretch(float duration)
