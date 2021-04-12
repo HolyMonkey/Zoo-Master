@@ -3,18 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
+using RSG;
 
 public class Net : MonoBehaviour
 {
     [SerializeField] private Node _prefab;
     [SerializeField] private float _distance = 3;
-    [SerializeField] private int _radius = 5;
     [SerializeField] private AnimalSpawner _spawner;
     [SerializeField] private HandPointer _pointer;
     [SerializeField] private Aviaries _aviaries;
 
     private List<Node> _nodes = new List<Node>();
     private List<Node> _selectedNodes = new List<Node>();
+    private IPromiseTimer _timer = new PromiseTimer();
 
     public event UnityAction Selected;
     public event UnityAction Deselected;
@@ -22,10 +23,9 @@ public class Net : MonoBehaviour
     public event UnityAction BadClick;
     public event UnityAction GoodClick;
 
-    private void Start()
+    public void BuildLevel(int rows)
     {
-        SpawnGrid(_radius);
-
+        SpawnGrid(rows);
         foreach (Node node in _nodes)
             node.SetConnected(FindConnected(node));
 
@@ -37,6 +37,8 @@ public class Net : MonoBehaviour
 
     private void Update()
     {
+        _timer.Update(Time.deltaTime);
+
         if (Input.GetKeyDown(KeyCode.B))
             CalcMove(true, 0);
 
@@ -223,7 +225,7 @@ public class Net : MonoBehaviour
 
     private Node[] FindConnected(Node node)
     {
-        return _nodes.Where(item => item != node && Vector3.Distance(node.transform.position, item.transform.position) < _distance * 1.1f).ToArray();
+        return _nodes.Where(item => item != node && Vector3.Distance(node.transform.position, item.transform.position) < _distance * 1.5f).ToArray();
     }
 
     private void SpawnGrid(int rows)
@@ -231,8 +233,8 @@ public class Net : MonoBehaviour
         int midRow = rows / 2;
         int cols = 4;
         float dX = _distance;
-        float dZ = Mathf.Sqrt(dX * dX - (dX * dX) / 4);
-        float z0 = -(rows - 1) * dZ / 2;
+        float dZ = _distance;// Mathf.Sqrt(dX * dX - (dX * dX) / 4);
+        float z0 = 0;
         for (int row = 0; row < rows; row++)
         {
             float z = row * dZ;
@@ -261,7 +263,7 @@ public class Net : MonoBehaviour
 
     private void SpawnAnimal(Node node)
     {
-        node.MakeBusy(_spawner.Spawn(node.transform.position + Vector3.forward * 20), 0, false);
+        node.MakeBusy(_spawner.Spawn(node.transform.position));
     }
 
     private bool TryUpdateNode(Node node, bool back = false, float delay = 0)

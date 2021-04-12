@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
 using UnityEngine.Events;
+using RSG;
 
 public class Aviary : MonoBehaviour
 {
@@ -15,9 +16,12 @@ public class Aviary : MonoBehaviour
     [SerializeField] private ParticleSystem _confetti;
 
     private Stack<Animal>  _animals = new Stack<Animal>();
+    private IPromiseTimer _promiseTimer = new PromiseTimer();
 
     public Vector3 DoorPosition => _door.transform.position;
     public ComboText ComboText => _comboText;
+    public bool HasAnimals => _animals.Count > 0;
+    public int AnimalID => _animals.Count > 0 ? _animals.Peek().ID : -100;
 
     public event UnityAction<Aviary> GotAnimal;
     public event UnityAction<List<Animal>> ReleasedAnimals;
@@ -25,20 +29,11 @@ public class Aviary : MonoBehaviour
     public event UnityAction VeryNiceMove;
     public event UnityAction BadMove;
 
-    public void OpenDoor()
-    {
-        _door.Open();
-    }
+    public void OpenDoor() => _door.Open();
 
-    public void PlayConfetti()
-    {
-        _confetti.Play();
-    }
+    public void PlayConfetti() => _confetti.Play();
 
-    public void CloseDoor(float delay)
-    {
-        StartCoroutine(CloseAfter(delay));
-    }
+    public void CloseDoor() => _door.Close();
 
     public void TakeGroup(List<Node> nodes)
     {
@@ -57,62 +52,59 @@ public class Aviary : MonoBehaviour
         StartCoroutine(AddAnimalsLoop(animals));
     }
 
-    private IEnumerator AddAnimalsLoop(List<Animal> animals)
+    private IEnumerator AddAnimalsLoop(List<Animal> newAnimals)
     {
-        bool sameAnimals = _animals.Count == 0 || animals[0].ID == _animals.Peek().ID;
-        foreach (var animal in animals)
+        bool sameAnimals = _animals.Count == 0 || newAnimals[0].ID == _animals.Peek().ID;
+        MoveAnimals(newAnimals.Count * _movePerAnimal);
+        float maxDelta = _movePerAnimal * (newAnimals.Count - 1);
+        int i = 0;
+        foreach (var animal in newAnimals)
         {
-            MoveAnimalsBack(_movePerAnimal);
-
             _animals.Push(animal);
-            animal.MoveToAviary(this);
-            StartCoroutine(UpdateCounter(GetSameAnimalsInRowCount(), animal.CountColor, 0.3f, sameAnimals));
+            int sideDelta = _animals.Count % 2 == 0 ? 1 : -1;
+            Vector3 position = transform.position - transform.forward * (2 + maxDelta - i * _movePerAnimal) + transform.right * sideDelta;
+            animal.MoveToAviary(this, 0.5f, position);
+            _promiseTimer.WaitFor(0.3f).Then(() =>
+            {
+                UpdateCounter(GetSameAnimalsInRowCount(), animal.CountColor, sameAnimals);
+            });
+            i++;
 
             yield return new WaitForSeconds(0.1f);
         }
 
-        CloseDoor(0.4f);
-        StartCoroutine(ReactOnNewAnimals(0.4f, animals));
-    }
-
-    private void MoveAnimalsBack(float delta)
-    {
-        foreach (Animal animal in _animals)
-            animal.MoveTo(animal.transform.position - transform.forward * delta);
-    }
-
-    private void MoveAnimalsForward()
-    {
-        float minDistance = 1000;
-        foreach (Animal animal in _animals)
+        _promiseTimer.WaitFor(0.4f).Then(() =>
         {
-            float distance = Vector3.Distance(animal.transform.position, transform.position);
-            if (distance < minDistance)
-                minDistance = distance;
-        }
-
-        foreach (Animal animal in _animals)
-            animal.MoveTo(animal.transform.position + transform.forward * minDistance);
+            _door.Close();
+            ReactOnNewAnimals(newAnimals);
+        });
     }
 
-    private IEnumerator UpdateCounter(int value, Color color, float delay, bool sameAnimals)
+    private void MoveAnimals(float delta)
     {
-        yield return new WaitForSeconds(delay);
+        foreach (var item in _animals)
+        {
+            _promiseTimer.WaitFor(0.2f).Then(() =>
+            {
+                item.Go(item.transform.position + transform.forward * -delta, 0.2f);
+            });
+        }
+    }
 
-        _comboImage.color = color;
-        _comboText.QuickReset();
-        _comboText.Increase(value);
+    private void UpdateCounter(int value, Color color, bool sameAnimals)
+    {
+        //_comboImage.color = color;
+        //_comboText.QuickReset();
+        //_comboText.Increase(value);
         if (sameAnimals)
             GotAnimal?.Invoke(this);
     }
 
-    private IEnumerator ReactOnNewAnimals(float delay, List<Animal> newAnimals)
+    private void ReactOnNewAnimals(List<Animal> newAnimals)
     {
-        yield return new WaitForSeconds(delay);
-
+        int newAnimalsID = newAnimals[0].ID;
         if (newAnimals.Count != _animals.Count)
         {
-            int newAnimalsID = newAnimals[0].ID;
             if (_animals.Where(item => item.ID == newAnimalsID).ToArray().Length == _animals.Count)
             {
                 string animation = newAnimals.Count > 3 ? "spin" : "bounce";
@@ -137,34 +129,37 @@ public class Aviary : MonoBehaviour
         }
         else
         {
-            if (newAnimals.Count > 4)
-                VeryNiceMove?.Invoke();
-            else if (newAnimals.Count > 2)
-                NiceMove?.Invoke();
+            Aviary[] aviaries = FindObjectsOfType<Aviary>();
+            bool canGet = true;
+            foreach (var item in aviaries)
+                if (item != this && item.HasAnimals && item.AnimalID == newAnimalsID)
+                    canGet = false;
+
+            if (canGet)
+            {
+                if (newAnimals.Count > 4)
+                    VeryNiceMove?.Invoke();
+                else if (newAnimals.Count > 2)
+                    NiceMove?.Invoke();
+            }
+            else
+            {
+                foreach (Animal animal in _animals)
+                    animal.PlayAnimation("fear");
+
+                int count = GetSameAnimalsInRowCount();
+                ReleaseAnimals(count);
+
+                BadMove?.Invoke();
+            }
         }
-    }
-
-    private IEnumerator CloseAfter(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        _door.Close();
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.TryGetComponent(out Animal animal))
-            StartCoroutine(EnableNavAgentAfter(animal, 0.1f));
-    }
-
-    private IEnumerator EnableNavAgentAfter(Animal animal, float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        animal.EnableNavAgent();
-
     }
 
     private int GetSameAnimalsInRowCount()
     {
+        if (_animals.Count == 0)
+            return 0;
+
         int count = 0;
         int prevID = _animals.Peek().ID;
         foreach (var item in _animals)
@@ -184,15 +179,23 @@ public class Aviary : MonoBehaviour
         for (int i = 0; i < count; i++)
         {
             Animal animal = _animals.Pop();
-            animal.DisableNavAgent();
             animals.Add(animal);
         }
 
+        MoveAnimals(-count * _movePerAnimal);
+
         OpenDoor();
-        CloseDoor(1f);
-        MoveAnimalsForward();
-        StartCoroutine(UpdateCounter(GetSameAnimalsInRowCount(), _animals.Peek().CountColor, 0.2f, false));
+        _promiseTimer.WaitFor(1f).Then(() =>
+        {
+            CloseDoor();
+        });
 
         ReleasedAnimals?.Invoke(animals);
+        UpdateCounter(GetSameAnimalsInRowCount(), _animals.Peek().CountColor, false);
+    }
+
+    private void Update()
+    {
+        _promiseTimer.Update(Time.deltaTime);
     }
 }

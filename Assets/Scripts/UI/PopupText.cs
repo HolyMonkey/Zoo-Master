@@ -9,8 +9,9 @@ public class PopupText : MonoBehaviour
     [SerializeField] private float _appearTime = 2;
     [SerializeField] private string[] _content;
     [SerializeField] private TMP_Text _text;
+    [SerializeField] private float _appearPower = 2;
 
-    private Damping _dumping = new Damping(0.5f, 3, 0, 2);
+    private Damping _dumping;
     private Coroutine _appearTask;
     private Coroutine _disappearTask;
     private Coroutine _disappearDelayTask;
@@ -20,12 +21,16 @@ public class PopupText : MonoBehaviour
     {
         _transform.localScale = Vector3.zero;
         _camera = Camera.main;
+        _dumping = new Damping(0.5f, 3, 0, _appearPower);
     }
 
     public void Show(string text = "")
     {
         if (text == "")
-            _text.text = _content.Length > 0 ? _content[Random.Range(0, _content.Length)] : "";
+        {
+            if (_content.Length > 0)
+                _text.text = _content[Random.Range(0, _content.Length)];
+        }
         else
             _text.text = text;
 

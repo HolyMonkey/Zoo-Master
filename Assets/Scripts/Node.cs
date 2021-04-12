@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
+using RSG;
 
 public class Node : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class Node : MonoBehaviour
     private bool _onEdge = false;
     private Node[] _connectedNodes;
     private Animal _animal;
+    private IPromiseTimer _timer = new PromiseTimer();
 
     public int Index => _index;
     public bool IsBusy => _animal != null;
@@ -30,6 +32,11 @@ public class Node : MonoBehaviour
         _connectedNodes = nodes;
     }
 
+    public void MakeBusy(Animal animal)
+    {
+        _animal = animal;
+    }
+
     public void MakeBusy(Animal animal, float delay, bool fromAviary)
     {
         _animal = animal;
@@ -39,7 +46,10 @@ public class Node : MonoBehaviour
         }
         else
         {
-            _animal.Go(transform.position, 0.5f, delay);
+            _timer.WaitFor(delay).Then(() =>
+            {
+                _animal.Go(transform.position, 0.5f);
+            });
         }
     }
 
@@ -88,5 +98,10 @@ public class Node : MonoBehaviour
     public void Deselect()
     {
         _animal?.Unselect();
+    }
+
+    private void Update()
+    {
+        _timer.Update(Time.deltaTime);
     }
 }

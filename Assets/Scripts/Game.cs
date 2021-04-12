@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Game : MonoBehaviour
 {
@@ -13,8 +14,37 @@ public class Game : MonoBehaviour
     [SerializeField] private PopupText _plusTextPrefab;
     [SerializeField] private Canvas _canvas;
     [SerializeField] private HandPointer _pointer;
+    [SerializeField] private LevelDoneScreen _doneScreen;
+    [SerializeField] private ParticleSystem[] _finishEffects;
 
     private Aviary _lastAviary;
+    private int _level;
+    private const int _levelsPerScene = 5;
+
+    private void Awake()
+    {
+        _doneScreen.gameObject.SetActive(true);
+    }
+
+    private void Start()
+    {
+        _level = DB.GetLevel();
+        int rows = 1 + ((_level - 1) % _levelsPerScene + 1) * 2;
+        _net.BuildLevel(rows);
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            DB.ResetLevel();
+            Debug.Log("Reset level!");
+        }
+        else if (Input.GetKeyDown(KeyCode.U))
+        {
+            StartCoroutine(FinishGame());
+        }
+    }
 
     private void OnEnable()
     {
@@ -24,6 +54,7 @@ public class Game : MonoBehaviour
         _net.GoodClick += OnClickGood;
         _net.BadClick += OnClickBad;
         _combo.WillDisappear += DoneCombo;
+        _doneScreen.NextButtonClicked += LoadNextLevel;
         foreach (var item in _aviaries)
         {
             item.GotAnimal += OnGotAnimal;
@@ -41,6 +72,7 @@ public class Game : MonoBehaviour
         _net.GoodClick -= OnClickGood;
         _net.BadClick -= OnClickBad;
         _combo.WillDisappear -= DoneCombo;
+        _doneScreen.NextButtonClicked -= LoadNextLevel;
         foreach (var item in _aviaries)
         {
             item.GotAnimal -= OnGotAnimal;
@@ -93,7 +125,7 @@ public class Game : MonoBehaviour
     {
         if (combo > 1)
         {
-            int score = combo * 10;
+            int score = combo * 10 + combo * (combo + 3) / 2;
             if (_lastAviary != null)
             {
                 if (_canvas.renderMode == RenderMode.ScreenSpaceOverlay)
@@ -115,25 +147,32 @@ public class Game : MonoBehaviour
 
     private IEnumerator FinishGame()
     {
-        yield return new WaitForSeconds(1.2f);
+        yield return new WaitForSeconds(0.2f);
 
-        foreach (var item in _aviaries)
-        {
-            int combo = item.ComboText.Value;
-            if (combo > 1)
-            {
-                int score = combo * 10;
-                item.ComboText.Reset();
-                item.PlayConfetti();
-                PopupText plusText = Instantiate(_plusTextPrefab, transform);
-                plusText.transform.position = item.ComboText.transform.position + Vector3.up * 100;
-                plusText.Show("+" + score.ToString());
+        //foreach (var item in _aviaries)
+        //{
+        //    int combo = item.ComboText.Value;
+        //    if (combo > 1)
+        //    {
+        //        int score = combo * 10;
+        //        item.ComboText.Reset();
+        //        item.PlayConfetti();
+        //        PopupText plusText = Instantiate(_plusTextPrefab, transform);
+        //        plusText.transform.position = item.ComboText.transform.position + Vector3.up * 100;
+        //        plusText.Show("+" + score.ToString());
 
-                StartCoroutine(MovePlusText(plusText, 1, score));
+        //        StartCoroutine(MovePlusText(plusText, 1, score));
 
-                yield return new WaitForSeconds(0.2f);
-            }
-        }
+        //        yield return new WaitForSeconds(0.2f);
+        //    }
+        //}
+
+        foreach (var item in _finishEffects)
+            item.Play();
+
+        yield return new WaitForSeconds(0.1f);
+        _doneScreen.Appear(_score.Value, _level);
+        DB.IncreaseLevel();
     }
 
     private IEnumerator MovePlusText(PopupText plusText, float delay, int score)
@@ -153,5 +192,14 @@ public class Game : MonoBehaviour
         }
 
         _score.Increase(score);
+    }
+
+    private void LoadNextLevel()
+    {
+        int sceneIndex = (DB.GetLevel() - 1) / _levelsPerScene;
+        if (sceneIndex > SceneManager.sceneCountInBuildSettings - 1)
+            sceneIndex = 0;
+
+        SceneManager.LoadScene(sceneIndex);
     }
 }

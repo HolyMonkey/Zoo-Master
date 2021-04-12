@@ -23,7 +23,10 @@ public class HandPointer : MonoBehaviour
     public bool IsPressing { get; private set; } = false;
 
 
-    public void Play(string animation) => _animator.SetTrigger(animation);
+    public void Play(string animation)
+    {
+        //_animator?.SetTrigger(animation);
+    }
 
     public void ResetAngry() => _anger = 1;
 

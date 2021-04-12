@@ -2,10 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using RSG;
 
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(Outline))]
-[RequireComponent(typeof(NavMeshAgent))]
 public class Animal : MonoBehaviour
 {
     [SerializeField] private int _id;
@@ -13,10 +13,10 @@ public class Animal : MonoBehaviour
 
     private Animator _animator;
     private Outline _outline;
-    private NavMeshAgent _agent;
     private Damping _damp = new Damping(0.5f, 2, 0, 1);
     private Damping _errorDamp= new Damping(0.1f, 5, 0, 3);
     private Vector3 _aviaryDoorPosition;
+    private IPromiseTimer _timer = new PromiseTimer();
 
     private Coroutine _moveTask;
     private Coroutine _rotateTask;
@@ -25,17 +25,22 @@ public class Animal : MonoBehaviour
 
     public int ID => _id;
     public Color CountColor => _countColor;
+    public Vector3 TargetPosition { get; private set; }
 
     private void Awake()
     {
         _animator = GetComponent<Animator>();
         _outline = GetComponent<Outline>();
-        _agent = GetComponent<NavMeshAgent>();
     }
 
     private void Start()
     {
         StartCoroutine(RandomIdle());
+    }
+
+    private void Update()
+    {
+        _timer.Update(Time.deltaTime);
     }
 
     private IEnumerator RandomIdle()
@@ -73,75 +78,49 @@ public class Animal : MonoBehaviour
         _shakeTask = StartCoroutine(ShowShake());
     }
 
-    private IEnumerator ShakeAfter(float delay)
+    private IPromise _movePromise;
+
+    public void Go(Vector3 targetPosition, float duration)
     {
-        yield return new WaitForSeconds(delay);
-        Shake();
+        TargetPosition = targetPosition;
+        _timer.Cancel(_movePromise);
+
+        _movePromise = Move(targetPosition, duration).Then(() =>
+        {
+            _movePromise = RotateBack(0.25f);
+        });
     }
 
-    public void Go(Vector3 targetPosition, float duration, float delay)
+    private IPromise Move(Vector3 targetPosition, float duration)
     {
-        if (_moveTask != null)
-            StopCoroutine(_moveTask);
-
-        if (_rotateTask != null)
-            StopCoroutine(_rotateTask);
-
-        _moveTask = StartCoroutine(Move(targetPosition, duration, delay));
-        _rotateTask = StartCoroutine(RotateBack(0.25f, duration + delay));
-    }
-
-    public void EnableNavAgent() => _agent.enabled = true;
-
-    public void DisableNavAgent() => _agent.enabled = false;
-
-    private IEnumerator Move(Vector3 targetPosition, float duration, float delay = 0, string ease = "easeInOut")
-    {
-        yield return new WaitForSeconds(delay);
-
         _animator.SetBool("isMoving", true);
-        float time = 0;
+
         Vector3 position = transform.position;
         Quaternion rotation = transform.rotation;
         Vector3 delta = targetPosition - position;
         Quaternion targetRotation = delta.magnitude > 0.1f ? Quaternion.LookRotation(targetPosition - position, Vector3.up) : rotation;
+        CubicBezier easing = new CubicBezier(Easing.EaseInOut);
 
-        while (time < duration)
+        var promise = new Promise();
+        _timer.WaitWhile(time =>
         {
-            float value = time / duration;
-            switch (ease)
-            {
-                case "easeInOut":
-                    value = Ease.EaseInEaseOut(value);
-                    break;
-                case "easeIn":
-                    value = Ease.EaseIn(value);
-                    break;
-                case "easeOut":
-                    value = Ease.EaseOut(value);
-                    break;
-            }
+            float value = easing.GetValue(time.elapsedTime / duration);
             transform.position = Vector3.Lerp(position, targetPosition, value);
             transform.rotation = Quaternion.Lerp(rotation, targetRotation, value * 2);
-            yield return null;
-            time += Time.deltaTime;
-        }
-        transform.position = transform.position;
-        _animator.SetBool("isMoving", false);
+            return time.elapsedTime < duration;
+        }).Then(() => {
+            promise.Resolve();
+            _animator.SetBool("isMoving", false);
+        });
+
+        return promise;
     }
 
-    private IEnumerator Stretch(float duration)
+    private void Stretch(float progress)
     {
         Vector3 scale = Vector3.one;
         Vector3 targetScale = new Vector3(0.75f, 0.8f, 1.5f);
-        float time = 0;
-        while (time < duration)
-        {
-            transform.localScale = Vector3.Lerp(scale, targetScale, GetStretchValue(time / duration));
-            yield return null;
-            time += Time.deltaTime;
-        }
-        transform.localScale = scale;
+        transform.localScale = Vector3.Lerp(scale, targetScale, GetStretchValue(progress));
     }
 
     private float GetStretchValue(float x)
@@ -149,60 +128,65 @@ public class Animal : MonoBehaviour
         return 1 - Mathf.Pow(2 * x - 1, 4);
     }
 
-    private IEnumerator RotateBack(float duration, float delay = 0)
+    private IPromise RotateBack(float duration)
     {
-        yield return new WaitForSeconds(delay);
-
         Quaternion rotation = transform.rotation;
         Quaternion targetRotation = Quaternion.LookRotation(Vector3.back, Vector3.up);
-        float time = 0;
-        while (time < duration)
+        CubicBezier easing = new CubicBezier(Easing.EaseInOut);
+        return _timer.WaitWhile(timeData =>
         {
-            transform.rotation = Quaternion.Lerp(rotation, targetRotation, time / duration);
-            yield return null;
-            time += Time.deltaTime;
-        }
-        transform.rotation = targetRotation;
+            transform.rotation = Quaternion.Lerp(rotation, targetRotation, easing.GetValue(timeData.elapsedTime / duration));
+            return timeData.elapsedTime < duration;
+        });
     }
 
-    public void MoveToAviary(Aviary aviary)
+    public IPromise MoveFromAviary(Vector3 target)
     {
-        Vector3 delta = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized * 0.2f;
-        Vector3 aviaryPosition = aviary.transform.position + aviary.transform.forward * -4f + delta;
-        float distanceToDoor = Vector3.Distance(transform.position, aviary.DoorPosition);
-        float distanceToAviary = Vector3.Distance(aviary.DoorPosition, aviaryPosition);
-        float totalDuration = 0.4f;
-        float totalDistance = distanceToDoor + distanceToAviary;
-        float toDoorDuration = totalDuration * distanceToDoor / totalDistance;
-        float toAviaryDuration = totalDuration * distanceToAviary / totalDistance;
+        SmoothPath path = new SmoothPath(transform.position, target, new Vector3[] { _aviaryDoorPosition }, Vector3.forward, target - _aviaryDoorPosition, 2f);
+        var promise = new Promise();
+        _animator.SetBool("isMoving", true);
+        MoveAlongPath(path, 0.5f).Then(() => {
+            transform.position = target;
+            _animator.SetBool("isMoving", false);
+            RotateBack(0.2f);
+            promise.Resolve();
+        });
+        return promise;
+    }
 
+    public IPromise MoveToAviary(Aviary aviary, float duration, Vector3 targetPosition)
+    {
         _aviaryDoorPosition = aviary.DoorPosition;
-
-        StartCoroutine(Move(aviary.DoorPosition, toDoorDuration, 0, "easeIn"));
-        StartCoroutine(Move(aviaryPosition, toAviaryDuration, toDoorDuration, "easeOut"));
-        StartCoroutine(Stretch(totalDuration));
+        SmoothPath path = new SmoothPath(transform.position, targetPosition, new Vector3[] { aviary.DoorPosition + aviary.transform.forward * 5 }, transform.forward, transform.forward, 3f);
+        var promise = new Promise();
+        _animator.SetBool("isMoving", true);
+        MoveAlongPath(path, duration).Then(() => {
+            transform.position = targetPosition;
+            _animator.SetBool("isMoving", false);
+            RotateBack(0.2f);
+            promise.Resolve();
+        });
+        return promise;
     }
 
-    public void MoveFromAviary(Vector3 target)
+    private IPromise MoveAlongPath(SmoothPath path, float duration)
     {
-        float distanceToDoor = Vector3.Distance(transform.position, _aviaryDoorPosition);
-        float distanceToTarget = Vector3.Distance(_aviaryDoorPosition, target);
-        float totalDuration = 0.4f;
-        float totalDistance = distanceToDoor + distanceToTarget;
-        float toDoorDuration = totalDuration * distanceToDoor / totalDistance;
-        float toTargetDuration = totalDuration * distanceToTarget / totalDistance;
+        CubicBezier easing = new CubicBezier(Easing.EaseInOut);
+        float t = 0;
+        return _timer.WaitWhile(timeData =>
+        {
+            float value = easing.GetValue(t);
+            Vector3 newPosition = path.GetPosition(value);
+            Vector3 direction = newPosition - transform.position;
+            if (direction.magnitude > 0.01f)
+                transform.rotation = Quaternion.LookRotation(direction);
 
-        StartCoroutine(Move(_aviaryDoorPosition, toDoorDuration, 0, "easeIn"));
-        StartCoroutine(Move(target, toTargetDuration, toDoorDuration, "easeOut"));
-        StartCoroutine(Stretch(totalDuration));
-        _rotateTask = StartCoroutine(RotateBack(0.25f, totalDuration));
+            transform.position = newPosition;
+            Stretch(t);
 
-    }
-
-    public void MoveTo(Vector3 position)
-    {
-        if (_agent.enabled)
-            _agent.SetDestination(position);
+            t = timeData.elapsedTime / duration;
+            return t < 1;
+        });
     }
 
     public void PlayAnimation(string name, float delay = 0)

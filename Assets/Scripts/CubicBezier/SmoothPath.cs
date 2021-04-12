@@ -80,7 +80,7 @@ public class SmoothPath
         float totalLegth = 0;
         foreach (var curve in _curves)
         {
-            float curveLength = curve.GetLength();
+            float curveLength = curve.Length;
             _curvesLength.Add(curveLength);
             totalLegth += curveLength;
         }
