@@ -147,7 +147,7 @@ public class Game : MonoBehaviour
 
     private IEnumerator FinishGame()
     {
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(1f);
 
         //foreach (var item in _aviaries)
         //{
@@ -172,6 +172,7 @@ public class Game : MonoBehaviour
 
         yield return new WaitForSeconds(0.1f);
         _doneScreen.Appear(_score.Value, _level);
+        DB.AddScore(_score.Value);
         DB.IncreaseLevel();
     }
 
@@ -197,8 +198,7 @@ public class Game : MonoBehaviour
     private void LoadNextLevel()
     {
         int sceneIndex = (DB.GetLevel() - 1) / _levelsPerScene;
-        if (sceneIndex > SceneManager.sceneCountInBuildSettings - 1)
-            sceneIndex = 0;
+        sceneIndex %= SceneManager.sceneCountInBuildSettings;
 
         SceneManager.LoadScene(sceneIndex);
     }

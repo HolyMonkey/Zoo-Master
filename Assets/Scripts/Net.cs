@@ -73,7 +73,7 @@ public class Net : MonoBehaviour
     {
         if (Physics.Raycast(Camera.main.ScreenPointToRay(mousePosition), out RaycastHit hit, 1000))
         {
-            if (hit.transform.TryGetComponent(out Node node))
+            if (hit.transform.TryGetComponent(out Node node) && node.IsBusy)
             {
                 List<Node> nearAnimals = new List<Node>() { node };
                 bool needLoop = true;
@@ -109,11 +109,12 @@ public class Net : MonoBehaviour
                 {
                     if (CanMove(_selectedNodes))
                     {
-                        aviary.TakeGroup(_selectedNodes);
+                        if (aviary.TryTakeGroup(_selectedNodes))
+                            AnimalsChanged?.Invoke(GetAnimalsCount());
+
                         CalcMove(false, _selectedNodes.Count * 0.1f);
                         Deselect();
 
-                        AnimalsChanged?.Invoke(GetAnimalsCount());
 
                         GoodClick?.Invoke();
                     }

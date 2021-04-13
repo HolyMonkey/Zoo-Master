@@ -35,26 +35,29 @@ public class Aviary : MonoBehaviour
 
     public void CloseDoor() => _door.Close();
 
-    public void TakeGroup(List<Node> nodes)
+    public bool TryTakeGroup(List<Node> nodes)
     {
         List<Node> sortedNodes = nodes.OrderBy(item => Vector3.Distance(item.transform.position, transform.position)).ToList();
-        List<Animal> animals = new List<Animal>();
+        List<Animal> newAnimals = new List<Animal>();
         for (int i = 0; i < sortedNodes.Count; i++)
         {
             Node node = sortedNodes[i];
             if (node.IsBusy)
-                animals.Add(node.Animal);
+                newAnimals.Add(node.Animal);
 
             node.Deselect();
             node.Clear();
         }
         OpenDoor();
-        StartCoroutine(AddAnimalsLoop(animals));
+
+        bool sameAnimals = _animals.Count == 0 || newAnimals[0].ID == _animals.Peek().ID;
+        StartCoroutine(AddAnimalsLoop(newAnimals, sameAnimals));
+
+        return sameAnimals;
     }
 
-    private IEnumerator AddAnimalsLoop(List<Animal> newAnimals)
+    private IEnumerator AddAnimalsLoop(List<Animal> newAnimals, bool sameAnimals)
     {
-        bool sameAnimals = _animals.Count == 0 || newAnimals[0].ID == _animals.Peek().ID;
         MoveAnimals(newAnimals.Count * _movePerAnimal);
         float maxDelta = _movePerAnimal * (newAnimals.Count - 1);
         int i = 0;
