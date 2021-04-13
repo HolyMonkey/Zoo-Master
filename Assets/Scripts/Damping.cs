@@ -47,13 +47,14 @@ public class Damping
         return Mathf.Exp(-t * _zeta * _omega) * sinusoid;
     }
 
+
     private OmegaAndB NumericallySolveOmegaAndB(float zeta, float k, float y0, float v0)
     {
-        float errorfn(float B, float omega)
-        {
-            var omega_d = omega * Mathf.Sqrt(1 - zeta * zeta);
-            return B - ((zeta * omega * y0) + v0) / omega_d;
-        }
+        //float errorfn(float B, float omega)
+        //{
+        //    var omega_d = omega * Mathf.Sqrt(1 - zeta * zeta);
+        //    return B - ((zeta * omega * y0) + v0) / omega_d;
+        //}
 
         float A = y0;
         float B = zeta;
@@ -63,7 +64,9 @@ public class Damping
         void step()
         {
             omega = ComputeOmega(A, B, k, zeta);
-            error = errorfn(B, omega);
+            //error = errorfn(B, omega);
+            var omega_d = omega * Mathf.Sqrt(1 - zeta * zeta);
+            error = B - ((zeta * omega * y0) + v0) / omega_d;
             direction = -Mathf.Sign(error);
         }
 

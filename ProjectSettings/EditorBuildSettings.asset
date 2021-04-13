@@ -9,12 +9,12 @@ EditorBuildSettings:
     path: Assets/Scenes/Zoo.unity
     guid: 8d56414d010ac43bfacf9f5eafac6124
   - enabled: 1
+    path: Assets/Scenes/Candy.unity
+    guid: fb9cc5908e627421986347d25d4f7950
+  - enabled: 1
     path: Assets/Scenes/Farm.unity
     guid: 1fedcc2a83e164547934d17c1eeabe00
   - enabled: 1
     path: Assets/Scenes/Safari.unity
     guid: 79e68ad5658554908a8788b51defae14
-  - enabled: 1
-    path: Assets/Scenes/Arctic.unity
-    guid: fb9cc5908e627421986347d25d4f7950
   m_configObjects: {}
