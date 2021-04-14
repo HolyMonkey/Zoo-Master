@@ -1,0 +1,132 @@
+fileFormatVersion: 2
+guid: c824c09967e78fa459719dbb99c79d0f
+timeCreated: 1572026091
+licenseType: Store
+ModelImporter:
+  serializedVersion: 21
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: Small_Airplane_02_Aileron_FL
+    100004: Small_Airplane_02_Aileron_FR
+    100006: Small_Airplane_02_Aileron_R
+    100008: Small_Airplane_02_Aileron_RL
+    100010: Small_Airplane_02_Aileron_RR
+    100012: Small_Airplane_02_Prop
+    100014: Small_Airplane_02_Wheel_01
+    100016: Small_Airplane_02_Wheel_02
+    100018: Small_Airplane_02_Wheel_03
+    400000: //RootNode
+    400002: Small_Airplane_02_Aileron_FL
+    400004: Small_Airplane_02_Aileron_FR
+    400006: Small_Airplane_02_Aileron_R
+    400008: Small_Airplane_02_Aileron_RL
+    400010: Small_Airplane_02_Aileron_RR
+    400012: Small_Airplane_02_Prop
+    400014: Small_Airplane_02_Wheel_01
+    400016: Small_Airplane_02_Wheel_02
+    400018: Small_Airplane_02_Wheel_03
+    2300000: //RootNode
+    2300002: Small_Airplane_02_Aileron_FL
+    2300004: Small_Airplane_02_Aileron_FR
+    2300006: Small_Airplane_02_Aileron_R
+    2300008: Small_Airplane_02_Aileron_RL
+    2300010: Small_Airplane_02_Aileron_RR
+    2300012: Small_Airplane_02_Prop
+    2300014: Small_Airplane_02_Wheel_01
+    2300016: Small_Airplane_02_Wheel_02
+    2300018: Small_Airplane_02_Wheel_03
+    3300000: //RootNode
+    3300002: Small_Airplane_02_Aileron_FL
+    3300004: Small_Airplane_02_Aileron_FR
+    3300006: Small_Airplane_02_Aileron_R
+    3300008: Small_Airplane_02_Aileron_RL
+    3300010: Small_Airplane_02_Aileron_RR
+    3300012: Small_Airplane_02_Prop
+    3300014: Small_Airplane_02_Wheel_01
+    3300016: Small_Airplane_02_Wheel_02
+    3300018: Small_Airplane_02_Wheel_03
+    4300000: Small_Airplane_02
+    4300002: Small_Airplane_02_Prop
+    4300004: Small_Airplane_02_Aileron_RR
+    4300006: Small_Airplane_02_Aileron_R
+    4300008: Small_Airplane_02_Wheel_03
+    4300010: Small_Airplane_02_Aileron_FL
+    4300012: Small_Airplane_02_Wheel_01
+    4300014: Small_Airplane_02_Wheel_02
+    4300016: Small_Airplane_02_Aileron_FR
+    4300018: Small_Airplane_02_Aileron_RL
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

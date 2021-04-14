@@ -1,0 +1,197 @@
+fileFormatVersion: 2
+guid: 6be90af47b4b625448e58b2fbde32176
+timeCreated: 1572026089
+licenseType: Store
+ModelImporter:
+  serializedVersion: 21
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: Truck_01_Crane
+    100004: Truck_01_Crane_Arrow_Base
+    100006: Truck_01_Crane_Arrow_Part_01
+    100008: Truck_01_Crane_Arrow_Part_02
+    100010: Truck_01_Crane_Arrow_Part_03
+    100012: Truck_01_Crane_Arrow_Part_04
+    100014: Truck_01_Crane_Board_01
+    100016: Truck_01_Crane_Board_02
+    100018: Truck_01_Crane_Board_03
+    100020: Truck_01_Crane_Board_04
+    100022: Truck_01_Crane_Board_05
+    100024: Truck_01_Crane_Hook
+    100026: Truck_01_Crane_Leg_L
+    100028: Truck_01_Crane_Leg_R
+    100030: Truck_01_Hindcarriage_Wood
+    100032: Truck_01_Wheel_01
+    100034: Truck_01_Wheel_02
+    100036: Truck_01_Wheel_03
+    100038: Truck_01_Wheel_04
+    100040: Truck_01_Wood
+    100042: Truck_01_Wood_Belts
+    100044: Truck_01_Wooden_Bed
+    400000: //RootNode
+    400002: Truck_01_Crane
+    400004: Truck_01_Crane_Arrow_Base
+    400006: Truck_01_Crane_Arrow_Part_01
+    400008: Truck_01_Crane_Arrow_Part_02
+    400010: Truck_01_Crane_Arrow_Part_03
+    400012: Truck_01_Crane_Arrow_Part_04
+    400014: Truck_01_Crane_Board_01
+    400016: Truck_01_Crane_Board_02
+    400018: Truck_01_Crane_Board_03
+    400020: Truck_01_Crane_Board_04
+    400022: Truck_01_Crane_Board_05
+    400024: Truck_01_Crane_Hook
+    400026: Truck_01_Crane_Leg_L
+    400028: Truck_01_Crane_Leg_R
+    400030: Truck_01_Hindcarriage_Wood
+    400032: Truck_01_Wheel_01
+    400034: Truck_01_Wheel_02
+    400036: Truck_01_Wheel_03
+    400038: Truck_01_Wheel_04
+    400040: Truck_01_Wood
+    400042: Truck_01_Wood_Belts
+    400044: Truck_01_Wooden_Bed
+    2300000: //RootNode
+    2300002: Truck_01_Crane
+    2300004: Truck_01_Crane_Arrow_Base
+    2300006: Truck_01_Crane_Arrow_Part_01
+    2300008: Truck_01_Crane_Arrow_Part_02
+    2300010: Truck_01_Crane_Arrow_Part_03
+    2300012: Truck_01_Crane_Arrow_Part_04
+    2300014: Truck_01_Crane_Board_01
+    2300016: Truck_01_Crane_Board_02
+    2300018: Truck_01_Crane_Board_03
+    2300020: Truck_01_Crane_Board_04
+    2300022: Truck_01_Crane_Board_05
+    2300024: Truck_01_Crane_Hook
+    2300026: Truck_01_Crane_Leg_L
+    2300028: Truck_01_Crane_Leg_R
+    2300030: Truck_01_Hindcarriage_Wood
+    2300032: Truck_01_Wheel_01
+    2300034: Truck_01_Wheel_02
+    2300036: Truck_01_Wheel_03
+    2300038: Truck_01_Wheel_04
+    2300040: Truck_01_Wood
+    2300042: Truck_01_Wood_Belts
+    2300044: Truck_01_Wooden_Bed
+    3300000: //RootNode
+    3300002: Truck_01_Crane
+    3300004: Truck_01_Crane_Arrow_Base
+    3300006: Truck_01_Crane_Arrow_Part_01
+    3300008: Truck_01_Crane_Arrow_Part_02
+    3300010: Truck_01_Crane_Arrow_Part_03
+    3300012: Truck_01_Crane_Arrow_Part_04
+    3300014: Truck_01_Crane_Board_01
+    3300016: Truck_01_Crane_Board_02
+    3300018: Truck_01_Crane_Board_03
+    3300020: Truck_01_Crane_Board_04
+    3300022: Truck_01_Crane_Board_05
+    3300024: Truck_01_Crane_Hook
+    3300026: Truck_01_Crane_Leg_L
+    3300028: Truck_01_Crane_Leg_R
+    3300030: Truck_01_Hindcarriage_Wood
+    3300032: Truck_01_Wheel_01
+    3300034: Truck_01_Wheel_02
+    3300036: Truck_01_Wheel_03
+    3300038: Truck_01_Wheel_04
+    3300040: Truck_01_Wood
+    3300042: Truck_01_Wood_Belts
+    3300044: Truck_01_Wooden_Bed
+    4300000: Truck_01
+    4300002: Truck_01_Crane
+    4300004: Truck_01_Crane_Board_04
+    4300006: Truck_01_Crane_Board_01
+    4300008: Truck_01_Crane_Board_02
+    4300010: Truck_01_Crane_Board_05
+    4300012: Truck_01_Crane_Board_03
+    4300014: Truck_01_Crane_Leg_L
+    4300016: Truck_01_Crane_Leg_R
+    4300018: Truck_01_Crane_Arrow_Base
+    4300020: Truck_01_Crane_Arrow_Part_01
+    4300022: Truck_01_Crane_Arrow_Part_02
+    4300024: Truck_01_Crane_Arrow_Part_03
+    4300026: Truck_01_Crane_Arrow_Part_04
+    4300028: Truck_01_Crane_Hook
+    4300030: Truck_01_Hindcarriage_Wood
+    4300032: Truck_01_Wood
+    4300034: Truck_01_Wood_Belts
+    4300036: Truck_01_Wooden_Bed
+    4300038: Truck_01_Wheel_02
+    4300040: Truck_01_Wheel_04
+    4300042: Truck_01_Wheel_03
+    4300044: Truck_01_Wheel_01
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

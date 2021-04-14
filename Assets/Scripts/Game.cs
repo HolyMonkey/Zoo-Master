@@ -19,7 +19,7 @@ public class Game : MonoBehaviour
 
     private Aviary _lastAviary;
     private int _level;
-    private const int _levelsPerScene = 5;
+    private const int _levelsPerScene = 4;
 
     private void Awake()
     {
@@ -30,7 +30,7 @@ public class Game : MonoBehaviour
     {
         _level = DB.GetLevel();
         int rows = 1 + ((_level - 1) % _levelsPerScene + 1) * 2;
-        _net.BuildLevel(rows);
+        _net.BuildLevel(9);
     }
 
     private void Update()

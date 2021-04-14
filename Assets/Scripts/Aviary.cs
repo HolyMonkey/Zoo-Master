@@ -9,7 +9,7 @@ using RSG;
 
 public class Aviary : MonoBehaviour
 {
-    [SerializeField] private AviaryDoor _door;
+    [SerializeField] private Door _door;
     [SerializeField] private float _movePerAnimal = 0.1f;
     [SerializeField] private ComboText _comboText;
     [SerializeField] private Image _comboImage;
