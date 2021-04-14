@@ -17,6 +17,7 @@ public class Aviary : MonoBehaviour
 
     private Stack<Animal>  _animals = new Stack<Animal>();
     private IPromiseTimer _promiseTimer = new PromiseTimer();
+    private ComboContainer _comboContainer;
 
     public Vector3 DoorPosition => _door.transform.position;
     public ComboText ComboText => _comboText;
@@ -35,6 +36,35 @@ public class Aviary : MonoBehaviour
 
     public void CloseDoor() => _door.Close();
 
+    private void OnEnable()
+    {
+        NiceMove += OnNiceMove;
+        VeryNiceMove += OnNiceMove;
+        BadMove += OnBadMove;
+    }
+
+    private void OnDisable()
+    {
+        NiceMove -= OnNiceMove;
+        VeryNiceMove -= OnNiceMove;
+        BadMove -= OnBadMove;
+    }
+
+    private void OnNiceMove()
+    {
+        _comboContainer.AddStreak(transform.position);
+    }
+
+    private void OnBadMove()
+    {
+        _comboContainer.ResetStreak(transform.position);
+    }
+
+    public void Init(ComboContainer container)
+    {
+        _comboContainer = container;
+    }
+    
     public bool TryTakeGroup(List<Node> nodes)
     {
         List<Node> sortedNodes = nodes.OrderBy(item => Vector3.Distance(item.transform.position, transform.position)).ToList();
@@ -116,7 +146,7 @@ public class Aviary : MonoBehaviour
 
                 if (newAnimals.Count > 4)
                     VeryNiceMove?.Invoke();
-                else if (newAnimals.Count > 2)
+                else if (newAnimals.Count >= 2)
                     NiceMove?.Invoke();
             }
             else
@@ -142,7 +172,7 @@ public class Aviary : MonoBehaviour
             {
                 if (newAnimals.Count > 4)
                     VeryNiceMove?.Invoke();
-                else if (newAnimals.Count > 2)
+                else if (newAnimals.Count >= 2)
                     NiceMove?.Invoke();
             }
             else

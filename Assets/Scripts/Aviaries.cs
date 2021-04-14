@@ -5,6 +5,7 @@ using UnityEngine.Events;
 
 public class Aviaries : MonoBehaviour
 {
+    [SerializeField] private ComboContainer _comboContainer;
     [SerializeField] private Aviary[] _aviaries;
 
     public event UnityAction<List<Animal>> ReleasedAnimals;
@@ -19,6 +20,12 @@ public class Aviaries : MonoBehaviour
     {
         foreach (var item in _aviaries)
             item.ReleasedAnimals -= OnReleasedAnimals;
+    }
+
+    private void Start()
+    {
+        foreach (var item in _aviaries)
+            item.Init(_comboContainer);
     }
 
     private void OnReleasedAnimals(List<Animal> animals)
