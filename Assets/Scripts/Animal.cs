@@ -14,8 +14,9 @@ public class Animal : MonoBehaviour
     private Animator _animator;
     private Outline _outline;
     private Damping _damp = new Damping(0.5f, 2, 0, 1);
-    private Damping _errorDamp= new Damping(0.1f, 5, 0, 3);
+    private Damping _errorDamp = new Damping(0.1f, 5, 0, 3);
     private Vector3 _aviaryDoorPosition;
+    private Vector3 _startShakePosition;
     private IPromiseTimer _timer = new PromiseTimer();
 
     private Coroutine _moveTask;
@@ -72,8 +73,12 @@ public class Animal : MonoBehaviour
     public void Shake()
     {
         PlayAnimation("fear");
+
         if (_shakeTask != null)
+        {
             StopCoroutine(_shakeTask);
+            transform.position = _startShakePosition;
+        }
 
         _shakeTask = StartCoroutine(ShowShake());
     }
@@ -108,7 +113,8 @@ public class Animal : MonoBehaviour
             transform.position = Vector3.Lerp(position, targetPosition, value);
             transform.rotation = Quaternion.Lerp(rotation, targetRotation, value * 2);
             return time.elapsedTime < duration;
-        }).Then(() => {
+        }).Then(() =>
+        {
             promise.Resolve();
             _animator.SetBool("isMoving", false);
         });
@@ -145,7 +151,8 @@ public class Animal : MonoBehaviour
         SmoothPath path = new SmoothPath(transform.position, target, new Vector3[] { _aviaryDoorPosition }, Vector3.forward, target - _aviaryDoorPosition, 2f);
         var promise = new Promise();
         _animator.SetBool("isMoving", true);
-        MoveAlongPath(path, 0.5f).Then(() => {
+        MoveAlongPath(path, 0.5f).Then(() =>
+        {
             transform.position = target;
             _animator.SetBool("isMoving", false);
             RotateBack(0.2f);
@@ -160,7 +167,8 @@ public class Animal : MonoBehaviour
         SmoothPath path = new SmoothPath(transform.position, targetPosition, new Vector3[] { aviary.DoorPosition + aviary.transform.forward * 5 }, transform.forward, transform.forward, 3f);
         var promise = new Promise();
         _animator.SetBool("isMoving", true);
-        MoveAlongPath(path, duration).Then(() => {
+        MoveAlongPath(path, duration).Then(() =>
+        {
             transform.position = targetPosition;
             _animator.SetBool("isMoving", false);
             RotateBack(0.2f);
@@ -223,6 +231,7 @@ public class Animal : MonoBehaviour
 
     private IEnumerator ShowShake()
     {
+        _startShakePosition = transform.position;
         float duration = 0.5f;
         float time = 0;
         Vector3 position = transform.position;
