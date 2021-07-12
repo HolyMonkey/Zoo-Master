@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Events;
 
 public class Game : MonoBehaviour
 {
@@ -22,6 +23,8 @@ public class Game : MonoBehaviour
     private int _level;
     private const int _levelsPerScene = 4;
 
+    public event UnityAction<int> LevelStarted;
+
     private void Awake()
     {
         _doneScreen.gameObject.SetActive(true);
@@ -34,7 +37,8 @@ public class Game : MonoBehaviour
 
         _level = DB.GetLevel();
         int rows = 1 + ((_level - 1) % _levelsPerScene + 1) * 2;
-        _net.BuildLevel(9);
+        _net.BuildLevel(rows);
+        LevelStarted?.Invoke(_level);
     }
 
     private void Update()
