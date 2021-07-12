@@ -15,9 +15,12 @@ namespace ToonyColorsPro
 	{
 		public class TCP2_ShaderUpdateUnityTime : MonoBehaviour
 		{
-			void LateUpdate()
+			private float _deltaTime = 0f;
+
+			void Update()
 			{
-				Shader.SetGlobalFloat("unityTime", Time.time);
+				Shader.SetGlobalFloat("unityTime", _deltaTime);
+				_deltaTime += Time.deltaTime;
 			}
 		}
 	}

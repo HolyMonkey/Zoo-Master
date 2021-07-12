@@ -141,6 +141,7 @@ public class Aviary : MonoBehaviour
             if (_animals.Where(item => item.ID == newAnimalsID).ToArray().Length == _animals.Count)
             {
                 string animation = newAnimals.Count > 3 ? "spin" : "bounce";
+                animation = "bounce";
                 foreach (Animal animal in _animals)
                     animal.PlayAnimation(animation);
 

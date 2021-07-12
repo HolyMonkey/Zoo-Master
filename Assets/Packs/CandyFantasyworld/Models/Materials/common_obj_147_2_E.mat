@@ -4,10 +4,11 @@
 Material:
   serializedVersion: 6
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_Name: common_obj_147_2_E
-  m_Shader: {fileID: 4800000, guid: d52783133eb3d144cb449f9d886e0634, type: 3}
+  m_Shader: {fileID: 4800000, guid: 4afb2fb87321fe647840db5fb623fc28, type: 3}
   m_ShaderKeywords: _EMISSION
   m_LightmapFlags: 2
   m_EnableInstancingVariants: 0
@@ -82,6 +83,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _ThresholdTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _texcoord:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -102,17 +107,31 @@ Material:
     - _OcclusionStrength: 1
     - _Occlusionintensity: 0
     - _Parallax: 0.02
+    - _RampSmooth: 0.2
+    - _RampSmoothAdd: 0.75
+    - _RampThreshold: 0.5
+    - _RimMax: 0.85
+    - _RimMin: 0.6
     - _RimPower: 3
+    - _RimStrength: 0.5
     - _SmoothnessTextureChannel: 0
     - _Smoothnessintensity: 1
+    - _SpecBlend: 1
+    - _SpecSmooth: 1
     - _SpecularHighlights: 1
     - _SrcBlend: 1
+    - _ThresholdScale: 4
+    - _ThresholdStrength: 1
     - _UVSec: 0
     - _ZWrite: 1
     - __dirty: 1
+    - __dummy__: 0
     m_Colors:
     - _Albedocolor: {r: 1, g: 1, b: 1, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Emission: {r: 1, g: 1, b: 1, a: 0}
     - _EmissionColor: {r: 0.7, g: 0.7, b: 0.7, a: 0}
+    - _HColor: {r: 0.785, g: 0.785, b: 0.785, a: 1}
     - _RimColor: {r: 0.811359, g: 1, b: 0.5588235, a: 0}
+    - _SColor: {r: 0.195, g: 0.195, b: 0.195, a: 1}
+  m_BuildTextureStacks: []

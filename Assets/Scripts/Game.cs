@@ -16,6 +16,7 @@ public class Game : MonoBehaviour
     [SerializeField] private HandPointer _pointer;
     [SerializeField] private LevelDoneScreen _doneScreen;
     [SerializeField] private ParticleSystem[] _finishEffects;
+    [SerializeField] private AdSettings _adSettings;
 
     private Aviary _lastAviary;
     private int _level;
@@ -28,6 +29,9 @@ public class Game : MonoBehaviour
 
     private void Start()
     {
+        QualitySettings.vSyncCount = 0;
+        Application.targetFrameRate = 60;
+
         _level = DB.GetLevel();
         int rows = 1 + ((_level - 1) % _levelsPerScene + 1) * 2;
         _net.BuildLevel(9);
@@ -51,17 +55,14 @@ public class Game : MonoBehaviour
         _net.Selected += OnSelectedAnimals;
         _net.Deselected += OnDeselectedAnimals;
         _net.AnimalsChanged += OnAnimalsChanged;
-        _net.GoodClick += OnClickGood;
-        _net.BadClick += OnClickBad;
         _combo.WillDisappear += DoneCombo;
-        _doneScreen.NextButtonClicked += LoadNextLevel;
+        _doneScreen.NextButtonClicked += LoadNextLevelWithAd;
         foreach (var item in _aviaries)
         {
             item.GotAnimal += OnGotAnimal;
-            item.NiceMove += ShowNice;
-            item.VeryNiceMove += ShowVeryNice;
-            item.BadMove += ShowBad;
         }
+
+        _adSettings.InterstitialVideoShown += OnInterstitialVideoShown;
     }
 
     private void OnDisable()
@@ -69,28 +70,23 @@ public class Game : MonoBehaviour
         _net.Selected -= OnSelectedAnimals;
         _net.Deselected -= OnDeselectedAnimals;
         _net.AnimalsChanged -= OnAnimalsChanged;
-        _net.GoodClick -= OnClickGood;
-        _net.BadClick -= OnClickBad;
         _combo.WillDisappear -= DoneCombo;
-        _doneScreen.NextButtonClicked -= LoadNextLevel;
+        _doneScreen.NextButtonClicked -= LoadNextLevelWithAd;
         foreach (var item in _aviaries)
         {
             item.GotAnimal -= OnGotAnimal;
-            item.NiceMove -= ShowNice;
-            item.VeryNiceMove -= ShowVeryNice;
-            item.BadMove -= ShowBad;
         }
+
+        _adSettings.InterstitialVideoShown -= OnInterstitialVideoShown;
     }
 
-    private void ShowNice() => _pointer.Play("ok");
+    private void OnInterstitialVideoShown()
+    {
+        int sceneIndex = (DB.GetLevel() - 1) / _levelsPerScene;
+        sceneIndex %= SceneManager.sceneCountInBuildSettings;
 
-    private void ShowVeryNice() => _pointer.Play("thumbUp");
-
-    private void ShowBad() => _pointer.Play("angry");
-
-    private void OnClickGood() => _pointer.ResetAngry();
-
-    private void OnClickBad() => _pointer.AddAngry();
+        SceneManager.LoadScene(sceneIndex);
+    }
 
     private void OnSelectedAnimals()
     {
@@ -117,7 +113,7 @@ public class Game : MonoBehaviour
             Vector3 worldSpacePosition = aviary.DoorPosition + aviary.transform.forward * 2.5f + aviary.transform.up * 4;
             _combo.transform.position = worldSpacePosition;
         }
-        
+
         _combo.Increase();
     }
 
@@ -147,6 +143,15 @@ public class Game : MonoBehaviour
 
     private IEnumerator FinishGame()
     {
+        int level = DB.GetLevel();
+        Dictionary<string, object> eventParameters = new Dictionary<string, object>
+        {
+            { "Level number",  level},
+        };
+
+        AppMetrica.Instance.ReportEvent("Level Complete", eventParameters);
+        eventParameters.Clear();
+
         yield return new WaitForSeconds(1f);
 
         //foreach (var item in _aviaries)
@@ -195,11 +200,8 @@ public class Game : MonoBehaviour
         _score.Increase(score);
     }
 
-    private void LoadNextLevel()
+    private void LoadNextLevelWithAd()
     {
-        int sceneIndex = (DB.GetLevel() - 1) / _levelsPerScene;
-        sceneIndex %= SceneManager.sceneCountInBuildSettings;
-
-        SceneManager.LoadScene(sceneIndex);
+        _adSettings.ShowInterstitial();
     }
 }
