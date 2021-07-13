@@ -26,6 +26,7 @@ public class Aviary : MonoBehaviour
 
     public event UnityAction<Aviary> GotAnimal;
     public event UnityAction<List<Animal>> ReleasedAnimals;
+    public event UnityAction<Aviary> Interacted;
     public event UnityAction NiceMove;
     public event UnityAction VeryNiceMove;
     public event UnityAction BadMove;
@@ -187,6 +188,7 @@ public class Aviary : MonoBehaviour
                 BadMove?.Invoke();
             }
         }
+        Interacted?.Invoke(this);
     }
 
     private int GetSameAnimalsInRowCount()
