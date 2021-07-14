@@ -56,6 +56,11 @@ public class Animal : MonoBehaviour
         }
     }
 
+    public void SetID(int ID)
+    {
+        _id = ID;
+    }
+
     public void Select()
     {
         _outline.enabled = true;

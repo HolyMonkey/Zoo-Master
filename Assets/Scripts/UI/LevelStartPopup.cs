@@ -17,7 +17,7 @@ public class LevelStartPopup : MonoBehaviour
         _game.LevelStarted -= Show;
     }
 
-    private void Show(int level)
+    private void Show(int level, LevelType type)
     {
         var text = "LEVEL " + level.ToString();
         _popup.Show(text);

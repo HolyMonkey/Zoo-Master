@@ -10,19 +10,34 @@ public class SpawnAnimals
 
 public class AnimalSpawner : MonoBehaviour
 {
-    [SerializeField] private Animal[] _prefabs;
+    [SerializeField] private Game _game;
 
+    private AnimalSet _set;
     private List<Animal> _animals = new List<Animal>();
     private List<int> _indices = new List<int>();
 
+    private void OnEnable()
+    {
+        _game.LevelStarted += ChangeAnimalSet;
+    }
+
+    private void OnDisable()
+    {
+        _game.LevelStarted -= ChangeAnimalSet;
+    }
+
     public Animal Spawn(Vector3 position)
     {
-        int index = Random.Range(0, _prefabs.Length);
-        Animal animal = Instantiate(_prefabs[index], position, Quaternion.LookRotation(Vector3.back, Vector3.up));
-
-        _indices.Add(index);
+        int index = Random.Range(0, _set.Size);
+        Animal animal = Instantiate(_set.GetAnimalTemplate(index), position, Quaternion.LookRotation(Vector3.back, Vector3.up));
+        //_indices.Add(index);
         _animals.Add(animal);
         return animal;
+    }
+
+    private void ChangeAnimalSet(int level, LevelType type)
+    {
+        _set = type.AnimalSet;
     }
 
     //private void Update()

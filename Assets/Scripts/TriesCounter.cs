@@ -28,10 +28,9 @@ public class TriesCounter : MonoBehaviour
     {
         _tries++;
         TriesChanged?.Invoke(_tries);
-        Debug.Log(_tries);
     }
 
-    private void ResetTries(int level)
+    private void ResetTries(int level, LevelType type)
     {
         _tries = 0;
     }

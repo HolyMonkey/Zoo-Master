@@ -18,12 +18,13 @@ public class Game : MonoBehaviour
     [SerializeField] private LevelDoneScreen _doneScreen;
     [SerializeField] private ParticleSystem[] _finishEffects;
     [SerializeField] private AdSettings _adSettings;
+    [SerializeField] private List<LevelType> _levelTypes;
 
     private Aviary _lastAviary;
     private int _level;
     private const int _levelsPerScene = 4;
 
-    public event UnityAction<int> LevelStarted;
+    public event UnityAction<int, LevelType> LevelStarted;
 
     private void Awake()
     {
@@ -37,8 +38,8 @@ public class Game : MonoBehaviour
 
         _level = DB.GetLevel();
         int rows = 1 + ((_level - 1) % _levelsPerScene + 1) * 2;
+        LevelStarted?.Invoke(_level, _levelTypes[0]);
         _net.BuildLevel(rows);
-        LevelStarted?.Invoke(_level);
     }
 
     private void Update()
