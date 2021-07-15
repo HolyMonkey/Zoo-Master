@@ -11,10 +11,11 @@ public class SpawnAnimals
 public class AnimalSpawner : MonoBehaviour
 {
     [SerializeField] private Game _game;
+    [SerializeField] private float _spawnedRatio;
 
     private AnimalSet _set;
     private List<Animal> _animals = new List<Animal>();
-    private List<int> _indices = new List<int>();
+    private int[] _spawned;
 
     private void OnEnable()
     {
@@ -28,16 +29,36 @@ public class AnimalSpawner : MonoBehaviour
 
     public Animal Spawn(Vector3 position)
     {
-        int index = Random.Range(0, _set.Size);
+        var index = NewAnimalIndex();
         Animal animal = Instantiate(_set.GetAnimalTemplate(index), position, Quaternion.LookRotation(Vector3.back, Vector3.up));
-        //_indices.Add(index);
         _animals.Add(animal);
+        _spawned[index]++;
         return animal;
     }
 
     private void ChangeAnimalSet(int level, LevelType type)
     {
         _set = type.AnimalSet;
+        _spawned = new int[_set.Size];
+    }
+
+    private int NewAnimalIndex()
+    {
+        var animalsCount = 0;
+        foreach (var count in _spawned)
+            animalsCount += count;
+        for (var i=0; i< _set.Size; i++)
+        {
+            if (animalsCount - _spawned[i] > 0)
+            {
+                float ratio = (float)_spawned[i] / (animalsCount/_set.Size);
+                if (ratio < _spawnedRatio)
+                {
+                    return i;
+                }
+            }
+        }
+        return Random.Range(0, _set.Size);
     }
 
     //private void Update()

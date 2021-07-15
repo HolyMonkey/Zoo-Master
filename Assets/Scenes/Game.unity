@@ -6376,6 +6376,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _game: {fileID: 1412609795}
+  _spawnedRatio: 0.5
 --- !u!114 &1740958487
 MonoBehaviour:
   m_ObjectHideFlags: 0

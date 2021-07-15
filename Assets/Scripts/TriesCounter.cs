@@ -8,7 +8,7 @@ public class TriesCounter : MonoBehaviour
     [SerializeField] private Aviaries _aviaries;
     [SerializeField] private Game _game;
 
-    private int _tries = 0;
+    private int _tries;
 
     public event UnityAction<int> TriesChanged;
 
@@ -26,12 +26,14 @@ public class TriesCounter : MonoBehaviour
 
     private void Try()
     {
-        _tries++;
+        _tries--;
         TriesChanged?.Invoke(_tries);
     }
 
     private void ResetTries(int level, LevelType type)
     {
-        _tries = 0;
+        int rows = 1 + ((level - 1) % 4 + 1) * 2;
+        _tries = rows * 2;
+        TriesChanged?.Invoke(_tries);
     }
 }
