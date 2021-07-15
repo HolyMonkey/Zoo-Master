@@ -11,7 +11,7 @@ public class SpawnAnimals
 public class AnimalSpawner : MonoBehaviour
 {
     [SerializeField] private Game _game;
-    [SerializeField] private float _spawnedRatio;
+    [SerializeField] [Range(0,1)] private float _AnimalRatio;
 
     private AnimalSet _set;
     private List<Animal> _animals = new List<Animal>();
@@ -47,18 +47,24 @@ public class AnimalSpawner : MonoBehaviour
         var animalsCount = 0;
         foreach (var count in _spawned)
             animalsCount += count;
+        var ratios = new float[_spawned.Length];
         for (var i=0; i< _set.Size; i++)
         {
             if (animalsCount - _spawned[i] > 0)
             {
-                float ratio = (float)_spawned[i] / (animalsCount/_set.Size);
-                if (ratio < _spawnedRatio)
-                {
-                    return i;
-                }
+                ratios[i] = (float)_spawned[i] / ((animalsCount - _spawned[i])/(_set.Size -1));
             }
         }
-        return Random.Range(0, _set.Size);
+        var minRatioIndex = Random.Range(0, _set.Size);
+        for (var i = 0; i < _set.Size; i++)
+        {
+            if (ratios[i] < _AnimalRatio && ratios[i] < ratios[minRatioIndex])
+            {
+                minRatioIndex = i;
+            }
+        }
+        Debug.Log(_spawned + " " + minRatioIndex);
+        return minRatioIndex;
     }
 
     //private void Update()
