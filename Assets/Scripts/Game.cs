@@ -25,6 +25,7 @@ public class Game : MonoBehaviour
     private const int _levelsPerScene = 4;
 
     public event UnityAction<int, LevelType> LevelStarted;
+    public event UnityAction LevelCompleted;
 
     private void Awake()
     {
@@ -33,13 +34,7 @@ public class Game : MonoBehaviour
 
     private void Start()
     {
-        QualitySettings.vSyncCount = 0;
-        Application.targetFrameRate = 60;
-
-        _level = DB.GetLevel();
-        int rows = 1 + ((_level - 1) % _levelsPerScene + 1) * 2;
-        LevelStarted?.Invoke(_level, _levelTypes[0]);
-        _net.BuildLevel(rows);
+        StartLevel();
     }
 
     private void Update()
@@ -81,16 +76,30 @@ public class Game : MonoBehaviour
         {
             item.GotAnimal -= OnGotAnimal;
         }
-
         _adSettings.InterstitialVideoShown -= OnInterstitialVideoShown;
+    }
+
+    public void Restart()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    private void StartLevel()
+    {
+        QualitySettings.vSyncCount = 0;
+        Application.targetFrameRate = 60;
+
+        _level = DB.GetLevel();
+        int rows = 1 + ((_level - 1) % _levelsPerScene + 1) * 2;
+        var typeIndex = ((DB.GetLevel() - 1) / _levelsPerScene) % _levelTypes.Count;
+        LevelStarted?.Invoke(_level, _levelTypes[typeIndex]);
+        _net.BuildLevel(rows);
     }
 
     private void OnInterstitialVideoShown()
     {
         int sceneIndex = (DB.GetLevel() - 1) / _levelsPerScene;
-        sceneIndex %= SceneManager.sceneCountInBuildSettings;
-
-        SceneManager.LoadScene(sceneIndex);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     private void OnSelectedAnimals()
@@ -143,7 +152,10 @@ public class Game : MonoBehaviour
     private void OnAnimalsChanged(int count)
     {
         if (count == 0)
+        {
             StartCoroutine(FinishGame());
+            LevelCompleted?.Invoke();
+        }
     }
 
     private IEnumerator FinishGame()

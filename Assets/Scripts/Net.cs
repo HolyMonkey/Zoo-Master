@@ -12,6 +12,7 @@ public class Net : MonoBehaviour
     [SerializeField] private AnimalSpawner _spawner;
     [SerializeField] private HandPointer _pointer;
     [SerializeField] private Aviaries _aviaries;
+    [SerializeField] private InGameInput _input;
 
     private List<Node> _nodes = new List<Node>();
     private List<Node> _selectedNodes = new List<Node>();
@@ -54,7 +55,8 @@ public class Net : MonoBehaviour
         }
 
         if ((_pointer == null || _pointer.gameObject.activeSelf == false) && Input.GetMouseButtonDown(0))
-            HandleClick(Input.mousePosition);
+            if (_input.IsON)
+                HandleClick(Input.mousePosition);
     }
 
     private void OnEnable()

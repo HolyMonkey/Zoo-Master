@@ -5,9 +5,8 @@ using TMPro;
 
 public class TriesView : MonoBehaviour
 {
-    [SerializeField] private TriesCounter _counter;
+    [SerializeField] private Tries _counter;
     [SerializeField] private TMP_Text _text;
-    [SerializeField] private string _baseText;
 
     private void OnEnable()
     {
@@ -21,6 +20,6 @@ public class TriesView : MonoBehaviour
 
     private void OnCountChanged(int count)
     {
-        _text.text = _baseText + count.ToString();
+        _text.text = count.ToString();
     }
 }

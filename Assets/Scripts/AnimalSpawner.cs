@@ -63,7 +63,6 @@ public class AnimalSpawner : MonoBehaviour
                 minRatioIndex = i;
             }
         }
-        Debug.Log(_spawned + " " + minRatioIndex);
         return minRatioIndex;
     }
 
