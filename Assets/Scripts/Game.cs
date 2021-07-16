@@ -23,6 +23,7 @@ public class Game : MonoBehaviour
     private Aviary _lastAviary;
     private int _level;
     private const int _levelsPerScene = 4;
+    private bool _levelComplete;
 
     public event UnityAction<int, LevelType> LevelStarted;
     public event UnityAction LevelCompleted;
@@ -56,7 +57,7 @@ public class Game : MonoBehaviour
         _net.Deselected += OnDeselectedAnimals;
         _net.AnimalsChanged += OnAnimalsChanged;
         _combo.WillDisappear += DoneCombo;
-        _doneScreen.NextButtonClicked += LoadNextLevelWithAd;
+        _doneScreen.NextButtonClicked += ShowAd;
         foreach (var item in _aviaries)
         {
             item.GotAnimal += OnGotAnimal;
@@ -71,7 +72,7 @@ public class Game : MonoBehaviour
         _net.Deselected -= OnDeselectedAnimals;
         _net.AnimalsChanged -= OnAnimalsChanged;
         _combo.WillDisappear -= DoneCombo;
-        _doneScreen.NextButtonClicked -= LoadNextLevelWithAd;
+        _doneScreen.NextButtonClicked -= ShowAd;
         foreach (var item in _aviaries)
         {
             item.GotAnimal -= OnGotAnimal;
@@ -99,7 +100,8 @@ public class Game : MonoBehaviour
     private void OnInterstitialVideoShown()
     {
         int sceneIndex = (DB.GetLevel() - 1) / _levelsPerScene;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        if (_levelComplete)
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     private void OnSelectedAnimals()
@@ -154,6 +156,7 @@ public class Game : MonoBehaviour
         if (count == 0)
         {
             StartCoroutine(FinishGame());
+            _levelComplete = true;
             LevelCompleted?.Invoke();
         }
     }
@@ -217,8 +220,8 @@ public class Game : MonoBehaviour
         _score.Increase(score);
     }
 
-    private void LoadNextLevelWithAd()
+    private void ShowAd()
     {
-        _adSettings.ShowInterstitial();
+            _adSettings.ShowInterstitial();
     }
 }
