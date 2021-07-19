@@ -47,6 +47,17 @@ public class Tries : MonoBehaviour
     {
         _tries--;
         TriesChanged?.Invoke(_tries);
+        if (_tries == 0 && _AdActive == false)
+        {
+            int level = DB.GetLevel();
+            Dictionary<string, object> eventParameters = new Dictionary<string, object>
+            {
+                { "Level number",  level},
+            };
+
+            AppMetrica.Instance.ReportEvent("Lose", eventParameters);
+            eventParameters.Clear();
+        }
     }
 
     private void ResetTries(int level, LevelType type)
