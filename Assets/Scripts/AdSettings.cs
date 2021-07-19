@@ -10,6 +10,8 @@ public class AdSettings : MonoBehaviour, IInterstitialAdListener, IBannerAdListe
 
     public event UnityAction InterstitialVideoShown;
 
+    public bool CanShowInterstitial => Appodeal.canShow(Appodeal.INTERSTITIAL, "Levels") && !Appodeal.isPrecache(Appodeal.INTERSTITIAL);
+
     private void Start()
     {
         int adTypes = Appodeal.INTERSTITIAL | Appodeal.BANNER_BOTTOM;

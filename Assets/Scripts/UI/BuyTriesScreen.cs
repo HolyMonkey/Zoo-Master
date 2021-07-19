@@ -11,6 +11,7 @@ public class BuyTriesScreen : MonoBehaviour
     [SerializeField] private PopupText _levetText;
     [SerializeField] private PopupText _title;
     [SerializeField] private PopupText _restart;
+    [SerializeField] private AdSettings _adSettings;
     [SerializeField] private PopupText _ad;
     [SerializeField] private CanvasGroup _canvas;
     [SerializeField] private Tries _tries;
@@ -44,7 +45,8 @@ public class BuyTriesScreen : MonoBehaviour
             {
                 _timer.WaitFor(delay * 2).Then(() =>
                 {
-                    _ad.Show();
+                    if (_adSettings.CanShowInterstitial)
+                        _ad.Show();
                     _restart.Show();
                 });
             });

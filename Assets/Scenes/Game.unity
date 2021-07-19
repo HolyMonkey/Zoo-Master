@@ -1911,6 +1911,7 @@ MonoBehaviour:
   _levetText: {fileID: 4050504}
   _title: {fileID: 1337019935}
   _restart: {fileID: 2086250}
+  _adSettings: {fileID: 203742414}
   _ad: {fileID: 963799306}
   _canvas: {fileID: 367377858}
   _tries: {fileID: 1412609796}

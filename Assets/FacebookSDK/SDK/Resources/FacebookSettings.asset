@@ -18,13 +18,13 @@ MonoBehaviour:
   appIds:
   - 2242010842596330
   appLabels:
-  - App Name
+  - Zoo-master
   cookie: 1
-  logging: 1
+  logging: 0
   status: 1
   xfbml: 0
   frictionlessRequests: 1
-  androidKeystorePath: 
+  androidKeystorePath: ZooMaster.keystore
   iosURLSuffix: 
   appLinkSchemes:
   - list: []
