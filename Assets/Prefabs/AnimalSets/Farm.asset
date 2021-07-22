@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Farm
   m_EditorClassIdentifier: 
   _animals:
-  - {fileID: 5791226458601716087, guid: 7cd41f730444543a4a9f2a439f104f99, type: 3}
+  - {fileID: 781030232081728736, guid: f6a1b278b439749beb080f753c28953a, type: 3}
   - {fileID: 7058566966343283371, guid: 01cb5261ed7ab5d49a8dc2bd0fd70bec, type: 3}
   - {fileID: 5556574223179742238, guid: f84ebc8c0a4464f98a202f2c0a1340dc, type: 3}
   - {fileID: 6306507555274565864, guid: 10e2ea405777243038690b97934d9f73, type: 3}
