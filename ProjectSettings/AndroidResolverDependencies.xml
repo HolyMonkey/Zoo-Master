@@ -134,12 +134,12 @@
     <file>Assets/Plugins/Android/com.explorestack.protobuf-java-1.0.0.jar</file>
     <file>Assets/Plugins/Android/com.explorestack.protobuf-models-1.1.0.jar</file>
     <file>Assets/Plugins/Android/com.facebook.android.audience-network-sdk-6.3.0.aar</file>
-    <file>Assets/Plugins/Android/com.facebook.android.facebook-applinks-11.1.0.aar</file>
-    <file>Assets/Plugins/Android/com.facebook.android.facebook-common-11.1.0.aar</file>
-    <file>Assets/Plugins/Android/com.facebook.android.facebook-core-11.1.0.aar</file>
-    <file>Assets/Plugins/Android/com.facebook.android.facebook-gamingservices-11.1.0.aar</file>
-    <file>Assets/Plugins/Android/com.facebook.android.facebook-login-11.1.0.aar</file>
-    <file>Assets/Plugins/Android/com.facebook.android.facebook-share-11.1.0.aar</file>
+    <file>Assets/Plugins/Android/com.facebook.android.facebook-applinks-11.1.1.aar</file>
+    <file>Assets/Plugins/Android/com.facebook.android.facebook-common-11.1.1.aar</file>
+    <file>Assets/Plugins/Android/com.facebook.android.facebook-core-11.1.1.aar</file>
+    <file>Assets/Plugins/Android/com.facebook.android.facebook-gamingservices-11.1.1.aar</file>
+    <file>Assets/Plugins/Android/com.facebook.android.facebook-login-11.1.1.aar</file>
+    <file>Assets/Plugins/Android/com.facebook.android.facebook-share-11.1.1.aar</file>
     <file>Assets/Plugins/Android/com.google.android.exoplayer.exoplayer-core-2.11.7.aar</file>
     <file>Assets/Plugins/Android/com.google.android.exoplayer.exoplayer-hls-2.8.4.aar</file>
     <file>Assets/Plugins/Android/com.google.android.gms.play-services-ads-19.7.0.aar</file>

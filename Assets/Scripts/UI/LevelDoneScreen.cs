@@ -4,13 +4,16 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 using RSG;
+using TMPro;
 
 public class LevelDoneScreen : MonoBehaviour
 {
     [SerializeField] private Image _background;
     [SerializeField] private PopupText _levetText;
     [SerializeField] private PopupText _title;
-    [SerializeField] private PopupText _score;
+    [SerializeField] private PopupText _scorePopup;
+    [SerializeField] private ComboText _score;
+    [SerializeField] private TMP_Text _scoreText;
     [SerializeField] private PopupText _button;
 
     private IPromiseTimer _timer = new PromiseTimer();
@@ -37,7 +40,7 @@ public class LevelDoneScreen : MonoBehaviour
             _title.Show();
             _timer.WaitFor(delay).Then(() =>
             {
-                _score.Show("+" + score);
+                _scorePopup.Show("+" + score);
                 _timer.WaitFor(delay * 2).Then(() =>
                 {
                     _button.Show();
@@ -49,11 +52,13 @@ public class LevelDoneScreen : MonoBehaviour
     private void OnEnable()
     {
         _button.GetComponent<Button>().onClick.AddListener(OnNextButtonClicked);
+        _score.ScoreChanged += OnScoreChanged;
     }
 
     private void OnDisable()
     {
         _button.GetComponent<Button>().onClick.RemoveListener(OnNextButtonClicked);
+        _score.ScoreChanged -= OnScoreChanged;
     }
 
     private void Awake()
@@ -70,5 +75,10 @@ public class LevelDoneScreen : MonoBehaviour
     private void OnNextButtonClicked()
     {
         NextButtonClicked?.Invoke();
+    }
+
+    private void OnScoreChanged(int score)
+    {
+        _scoreText.text = "+" + score.ToString();
     }
 }

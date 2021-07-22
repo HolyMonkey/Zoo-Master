@@ -18,7 +18,7 @@ public class ComboText : MonoBehaviour
     private Damping _dumping = new Damping(0.5f, 3, 0, 1);
     private RectTransform _labelTransform;
 
-    private int x = 0;
+    private int _score = 0;
     private float _numberScale = 1;
     private Coroutine _pulseTask;
     private Coroutine _disappearTask;
@@ -26,14 +26,16 @@ public class ComboText : MonoBehaviour
     private bool _isActive = false;
     private bool _locked = false;
 
-    public int Value => x;
+    public int Value => _score;
+
+    public event UnityAction<int> ScoreChanged;
     public event UnityAction<int> WillDisappear;
 
     private void Awake()
     {
         _labelTransform = _label.GetComponent<RectTransform>();
 
-        if (x < _minValue)
+        if (_score < _minValue)
         {
             _labelTransform.localScale = Vector3.zero;
             _numberPanel.localScale = Vector3.zero;
@@ -45,9 +47,10 @@ public class ComboText : MonoBehaviour
         if (_locked)
             return;
 
-        x += value;
-        _number.text = x.ToString();
-        _numberPanel.gameObject.SetActive(x > _minValue);
+        _score += value;
+        ScoreChanged?.Invoke(_score);
+        _number.text = _score.ToString();
+        _numberPanel.gameObject.SetActive(_score > _minValue);
 
         if (_disappearDelayTask != null)
             StopCoroutine(_disappearDelayTask);
@@ -71,9 +74,9 @@ public class ComboText : MonoBehaviour
 
     public void QuickReset()
     {
-        x = 0;
-        _number.text = x.ToString();
-        _numberPanel.gameObject.SetActive(x > _minValue);
+        _score = 0;
+        _number.text = _score.ToString();
+        _numberPanel.gameObject.SetActive(_score > _minValue);
     }
 
     public void Reset()
@@ -129,7 +132,7 @@ public class ComboText : MonoBehaviour
 
     private IEnumerator Disappear()
     {
-        WillDisappear?.Invoke(x);
+        WillDisappear?.Invoke(_score);
 
         float delay = 0.06f;
         float duration = 0.2f;
@@ -154,7 +157,7 @@ public class ComboText : MonoBehaviour
 
         _isActive = false;
         _numberScale = 1;
-        x = 0;
+        _score = 0;
     }
 
     private IEnumerator Pulse()

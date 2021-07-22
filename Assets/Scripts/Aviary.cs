@@ -145,7 +145,6 @@ public class Aviary : MonoBehaviour
                 animation = "bounce";
                 foreach (Animal animal in _animals)
                     animal.PlayAnimation(animation);
-
                 if (newAnimals.Count > 4)
                     VeryNiceMove?.Invoke();
                 else if (newAnimals.Count >= 2)
@@ -157,9 +156,8 @@ public class Aviary : MonoBehaviour
                     animal.PlayAnimation("fear");
 
                 int count = GetSameAnimalsInRowCount();
-                ReleaseAnimals(count);
-
                 BadMove?.Invoke();
+                ReleaseAnimals(count);
             }
         }
         else
@@ -169,7 +167,6 @@ public class Aviary : MonoBehaviour
             foreach (var item in aviaries)
                 if (item != this && item.HasAnimals && item.AnimalID == newAnimalsID)
                     canGet = false;
-
             if (canGet)
             {
                 if (newAnimals.Count > 4)
@@ -181,11 +178,10 @@ public class Aviary : MonoBehaviour
             {
                 foreach (Animal animal in _animals)
                     animal.PlayAnimation("fear");
-
+                Interacted?.Invoke(this);
+                BadMove?.Invoke();
                 int count = GetSameAnimalsInRowCount();
                 ReleaseAnimals(count);
-
-                BadMove?.Invoke();
             }
         }
         Interacted?.Invoke(this);

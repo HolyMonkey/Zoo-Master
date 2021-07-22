@@ -18,6 +18,7 @@ public class Animal : MonoBehaviour
     private Vector3 _aviaryDoorPosition;
     private Vector3 _startShakePosition;
     private IPromiseTimer _timer = new PromiseTimer();
+    private Vector3 _baseScale;
 
     private Coroutine _moveTask;
     private Coroutine _rotateTask;
@@ -32,6 +33,7 @@ public class Animal : MonoBehaviour
     {
         _animator = GetComponent<Animator>();
         _outline = GetComponent<Outline>();
+        _baseScale = transform.localScale;
     }
 
     private void Start()
@@ -129,8 +131,11 @@ public class Animal : MonoBehaviour
 
     private void Stretch(float progress)
     {
-        Vector3 scale = Vector3.one;
-        Vector3 targetScale = new Vector3(0.75f, 0.8f, 1.5f);
+        Vector3 scale = _baseScale;
+        Vector3 targetScale = _baseScale;
+        targetScale.x *= 0.75f;
+        targetScale.y *= 0.8f;
+        targetScale.z *= 1.5f;
         transform.localScale = Vector3.Lerp(scale, targetScale, GetStretchValue(progress));
     }
 
@@ -218,7 +223,10 @@ public class Animal : MonoBehaviour
         float duration = 0.3f;
         float time = 0;
         Vector3 scale = transform.localScale;
-        Vector3 targetScale = new Vector3(1.5f, 0.6f, 1.3f);
+        Vector3 targetScale = _baseScale;
+        targetScale.x *= 1.5f;
+        targetScale.y *= 0.6f;
+        targetScale.z *= 1.3f;
 
         while (time < duration)
         {
@@ -231,7 +239,7 @@ public class Animal : MonoBehaviour
             time += Time.deltaTime;
         }
 
-        transform.localScale = scale;
+        transform.localScale = _baseScale;
     }
 
     private IEnumerator ShowShake()
