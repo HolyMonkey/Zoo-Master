@@ -24,9 +24,9 @@ public class Net : MonoBehaviour
     public event UnityAction BadClick;
     public event UnityAction GoodClick;
 
-    public void BuildLevel(int rows)
+    public void BuildLevel(int rows, int cols)
     {
-        SpawnGrid(rows);
+        SpawnGrid(rows, cols);
         foreach (Node node in _nodes)
             node.SetConnected(FindConnected(node));
 
@@ -230,19 +230,18 @@ public class Net : MonoBehaviour
         return _nodes.Where(item => item != node && Vector3.Distance(node.transform.position, item.transform.position) < _distance * 1.5f).ToArray();
     }
 
-    private void SpawnGrid(int rows)
+    private void SpawnGrid(int rows, int cols)
     {
         int midRow = rows / 2;
-        int cols = 4;
         float dX = _distance;
         float dZ = _distance;// Mathf.Sqrt(dX * dX - (dX * dX) / 4);
         float z0 = 0;
         for (int row = 0; row < rows; row++)
         {
             float z = row * dZ;
-            int newCols = cols + row;
-            if (row > midRow)
-                newCols = cols + midRow + midRow - row;
+            int newCols = cols + row%2;
+            //if (row > midRow)
+            //    newCols = cols + midRow + midRow - row;
 
             float x0 = (newCols - 1) * -dX / 2;
             for (int col = 0; col < newCols; col++)

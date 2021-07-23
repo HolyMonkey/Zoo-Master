@@ -92,9 +92,10 @@ public class Game : MonoBehaviour
 
         _level = DB.GetLevel();
         int rows = 1 + ((_level - 1) % _levelsPerScene + 1) * 2;
+        int cols = 4;
         var typeIndex = ((DB.GetLevel() - 1) / _levelsPerScene) % _levelTypes.Count;
         LevelStarted?.Invoke(_level, _levelTypes[typeIndex]);
-        _net.BuildLevel(rows);
+        _net.BuildLevel(rows, cols);
     }
 
     private void OnInterstitialVideoShown()
