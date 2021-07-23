@@ -81,8 +81,13 @@ public class Aviary : MonoBehaviour
         }
         OpenDoor();
 
+        bool inOtherAviary = false;
+        Aviary[] aviaries = FindObjectsOfType<Aviary>();
+        foreach (var item in aviaries)
+            if (item != this && item.HasAnimals && item.AnimalID == newAnimals[0].ID)
+                inOtherAviary = true;
         bool sameAnimals = _animals.Count == 0 || newAnimals[0].ID == _animals.Peek().ID;
-        StartCoroutine(AddAnimalsLoop(newAnimals, sameAnimals));
+        StartCoroutine(AddAnimalsLoop(newAnimals, sameAnimals && inOtherAviary == false));
 
         return sameAnimals;
     }
