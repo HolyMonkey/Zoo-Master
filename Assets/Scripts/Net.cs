@@ -239,9 +239,9 @@ public class Net : MonoBehaviour
         for (int row = 0; row < rows; row++)
         {
             float z = row * dZ;
-            int newCols = cols + row%2;
-            //if (row > midRow)
-            //    newCols = cols + midRow + midRow - row;
+            int newCols = cols + row;
+            if (row > midRow)
+                newCols = cols + midRow + midRow - row;
 
             float x0 = (newCols - 1) * -dX / 2;
             for (int col = 0; col < newCols; col++)
