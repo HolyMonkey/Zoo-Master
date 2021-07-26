@@ -19,9 +19,9 @@ public class Aviaries : MonoBehaviour
         {
             item.ReleasedAnimals += OnReleasedAnimals;
             item.Interacted += OnAviaryInteracted;
-            item.BadMove += BadAction;
-            item.NiceMove += GoodAction;
-            item.VeryNiceMove += GoodAction;
+            item.BadMove += OnBadAction;
+            item.NiceMove += OnGoodAction;
+            item.VeryNiceMove += OnGoodAction;
         }
     }
 

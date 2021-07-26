@@ -6,8 +6,13 @@ public class DB
 {
     private static readonly string LevelKey = "level";
     private static readonly string ScoreKey = "score";
+    private static readonly string InGameSoundKey = "ingamesound";
 
     public static int GetLevel() => PlayerPrefs.GetInt(LevelKey) + 1;
+
+    public static bool GetInGameSound() => PlayerPrefs.GetInt(InGameSoundKey) != 0;
+
+    public static void SetInGameSound(bool isOn) => PlayerPrefs.SetInt(InGameSoundKey, isOn? 1:0);
 
     public static void IncreaseLevel() => PlayerPrefs.SetInt(LevelKey, PlayerPrefs.GetInt(LevelKey) + 1);
 

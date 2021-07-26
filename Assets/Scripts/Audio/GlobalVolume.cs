@@ -3,38 +3,36 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class GlobalVolume : MonoBehaviour
+[System.Serializable]
+public abstract class GlobalVolume : MonoBehaviour
 {
-    [SerializeField] private SoundType _type;
-    [SerializeField] [Range(_min, _max)] private float _volumeValue;
+    [SerializeField] [Range(_min, _max)] private float _volume;
 
     private const float _min = 0f;
     private const float _max = 1f;
 
     private bool _muted;
 
-    public SoundType Type => _type;
+    public SoundType Type => GetSoundType();
 
-    private float _volume
+    public float Volume
     {
         get
         {
             if (_muted)
                 return 0;
             else
-                return _volumeValue;
+                return _volume;
         }
-    }
-    public float Volume
-    {
+
         set
         {
             if (value > _max || value < _min)
             {
                 throw new System.Exception("Volume value out of range");
             }
-            _volumeValue = value;
-            VolumeChanged?.Invoke(_volume);
+            _volume = value;
+            VolumeChanged?.Invoke(Volume);
         }
     }
 
@@ -49,7 +47,12 @@ public class GlobalVolume : MonoBehaviour
 
     private void OnValidate()
     {
-        VolumeChanged?.Invoke(_volume);
+        VolumeChanged?.Invoke(Volume);
+    }
+
+    private void Start()
+    {
+        SetMute(LoadMute());
     }
 
     public static bool TryFind(SoundType type, out GlobalVolume foundVolume)
@@ -81,7 +84,14 @@ public class GlobalVolume : MonoBehaviour
     private void SetMute(bool mute)
     {
         _muted = mute;
-        VolumeChanged?.Invoke(_volume);
+        VolumeChanged?.Invoke(Volume);
         Muted?.Invoke(_muted);
+        UploadMute(mute);
     }
+
+    public abstract bool LoadMute();
+
+    public abstract void UploadMute(bool mute);
+
+    public abstract SoundType GetSoundType();
 }
