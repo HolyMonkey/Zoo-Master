@@ -58,6 +58,7 @@ public class BuyTriesScreen : MonoBehaviour
         StartCoroutine(HideSelf(1f));
         _input.IsON = true;
         _canvas.interactable = false;
+        _canvas.blocksRaycasts = false;
     }
 
     private IEnumerator HideSelf(float showTime)
@@ -89,6 +90,8 @@ public class BuyTriesScreen : MonoBehaviour
     {
         _backColor = _background.color;
         _background.color = new Color(_backColor.r, _backColor.g, _backColor.b, 0);
+        _canvas.interactable = false;
+        _canvas.blocksRaycasts = false;
     }
 
     private void Update()
@@ -103,6 +106,7 @@ public class BuyTriesScreen : MonoBehaviour
             Appear(_level);
             _input.IsON = false;
             _canvas.interactable = true;
+            _canvas.blocksRaycasts = true;
         }
     }
 

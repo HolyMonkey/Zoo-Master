@@ -247,7 +247,7 @@ public class Net : MonoBehaviour
             for (int col = 0; col < newCols; col++)
             {
                 float x = dX * col;
-                bool isEdge = row == 0 || row == rows - 1 || col == 0 || col == newCols - 1;
+                bool isEdge = row == 0;// || row == rows - 1 || col == 0 || col == newCols - 1;
                 Vector3 position = new Vector3(x0 + x, 0, z0 + z);
                 int index = row * 10 + Mathf.Abs(col - newCols / 2);
                 Spawn(position, index, row, isEdge);

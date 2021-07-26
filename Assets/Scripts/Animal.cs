@@ -80,7 +80,6 @@ public class Animal : MonoBehaviour
     public void Shake()
     {
         PlayAnimation("fear");
-
         if (_shakeTask != null)
         {
             StopCoroutine(_shakeTask);
@@ -262,5 +261,6 @@ public class Animal : MonoBehaviour
         }
 
         transform.position = position;
+        _shakeTask = null;
     }
 }

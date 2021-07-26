@@ -15,6 +15,7 @@ public class LevelDoneScreen : MonoBehaviour
     [SerializeField] private ComboText _score;
     [SerializeField] private TMP_Text _scoreText;
     [SerializeField] private PopupText _button;
+    [SerializeField] private CanvasGroup _canvas;
 
     private IPromiseTimer _timer = new PromiseTimer();
     private Color _backColor;
@@ -23,6 +24,9 @@ public class LevelDoneScreen : MonoBehaviour
 
     public void Appear(int score, int level)
     {
+        _canvas.interactable = true;
+        _canvas.blocksRaycasts = true;
+
         Color startColor = new Color(_backColor.r, _backColor.g, _backColor.b, 0);
         _background.color = startColor;
 
@@ -65,6 +69,8 @@ public class LevelDoneScreen : MonoBehaviour
     {
         _backColor = _background.color;
         _background.color = new Color(_backColor.r, _backColor.g, _backColor.b, 0);
+        _canvas.interactable = false;
+        _canvas.blocksRaycasts = false;
     }
 
     private void Update()
