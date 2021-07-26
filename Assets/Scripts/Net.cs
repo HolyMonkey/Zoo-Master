@@ -23,6 +23,8 @@ public class Net : MonoBehaviour
     public event UnityAction<int> AnimalsChanged;
     public event UnityAction BadClick;
     public event UnityAction GoodClick;
+    public event UnityAction AnimalsMoving;
+    public event UnityAction BadTry;
 
     public void BuildLevel(int rows, int cols)
     {
@@ -115,6 +117,7 @@ public class Net : MonoBehaviour
                             AnimalsChanged?.Invoke(GetAnimalsCount());
 
                         CalcMove(false, _selectedNodes.Count * 0.1f);
+                        AnimalsMoving?.Invoke();
                         Deselect();
 
 
@@ -122,6 +125,7 @@ public class Net : MonoBehaviour
                     }
                     else
                     {
+                        BadTry?.Invoke();
                         foreach (Node item in _selectedNodes)
                             item.Animal.Shake();
 

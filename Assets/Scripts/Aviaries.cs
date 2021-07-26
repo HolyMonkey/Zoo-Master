@@ -10,13 +10,18 @@ public class Aviaries : MonoBehaviour
 
     public event UnityAction<List<Animal>> ReleasedAnimals;
     public event UnityAction Interacted;
- 
+    public event UnityAction GoodAction;
+    public event UnityAction BadAction;
+
     private void OnEnable()
     {
         foreach (var item in _aviaries)
         {
             item.ReleasedAnimals += OnReleasedAnimals;
             item.Interacted += OnAviaryInteracted;
+            item.BadMove += BadAction;
+            item.NiceMove += GoodAction;
+            item.VeryNiceMove += GoodAction;
         }
     }
 
@@ -26,6 +31,9 @@ public class Aviaries : MonoBehaviour
         {
             item.ReleasedAnimals -= OnReleasedAnimals;
             item.Interacted -= OnAviaryInteracted;
+            item.BadMove -= BadAction;
+            item.NiceMove -= GoodAction;
+            item.VeryNiceMove -= GoodAction;
         }
     }
 
@@ -43,5 +51,15 @@ public class Aviaries : MonoBehaviour
     private void OnAviaryInteracted(Aviary aviary)
     {
         Interacted?.Invoke();
+    }
+
+    private void OnBadAction()
+    {
+        BadAction?.Invoke();
+    }
+
+    private void OnGoodAction()
+    {
+        GoodAction?.Invoke();
     }
 }

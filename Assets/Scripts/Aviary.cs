@@ -152,7 +152,7 @@ public class Aviary : MonoBehaviour
                     animal.PlayAnimation(animation);
                 if (newAnimals.Count > 4)
                     VeryNiceMove?.Invoke();
-                else if (newAnimals.Count >= 2)
+                else if (newAnimals.Count >= 1)
                     NiceMove?.Invoke();
             }
             else
