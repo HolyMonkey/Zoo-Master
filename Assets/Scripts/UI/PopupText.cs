@@ -92,6 +92,7 @@ public class PopupText : MonoBehaviour
 
             yield return null;
             time += Time.deltaTime;
+
         }
 
         _transform.localScale = Vector3.zero;
