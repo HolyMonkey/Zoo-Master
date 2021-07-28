@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class MoveStage : TutorialStage
 {
-    [SerializeField] private TutorialCycleFollow _follower;
-    [SerializeField] private CanvasGroupPopUp _targeter;
+    [SerializeField] private SpriteColorAnimation _landmark;
     [SerializeField] private Net _net;
     [SerializeField] private Aviaries _aviaries;
     [SerializeField] private Transform _searchPoint;
@@ -48,13 +47,12 @@ public class MoveStage : TutorialStage
                 nearest = aviary;
             }
         }
-        _follower.Init(nearest.transform);
-        _targeter.Show();
+        _landmark.Show();
     }
 
     private void OnMove()
     {
         Complete();
-        _targeter.Hide();
+        _landmark.Hide();
     }
 }

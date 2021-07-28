@@ -10,7 +10,7 @@ public class DB
 
     public static int GetLevel() => PlayerPrefs.GetInt(LevelKey) + 1;
 
-    public static bool GetInGameSound() => PlayerPrefs.GetInt(InGameSoundKey) != 0;
+    public static bool GetInGameSound() => PlayerPrefs.GetInt(InGameSoundKey) != 0 || PlayerPrefs.HasKey(InGameSoundKey) == false;
 
     public static void SetInGameSound(bool isOn) => PlayerPrefs.SetInt(InGameSoundKey, isOn? 1:0);
 

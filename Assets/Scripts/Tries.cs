@@ -64,6 +64,8 @@ public class Tries : MonoBehaviour
     {
         int rows = 1 + ((level - 1) % 4 + 1) * 2;
         _tries = rows * 2;
+        if (DB.GetLevel() == 1)
+            _tries = 9;
         TriesChanged?.Invoke(_tries);
     }
 
