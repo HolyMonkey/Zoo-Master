@@ -6,19 +6,32 @@ public class WinSound : MonoBehaviour
 {
     [SerializeField] private AudioSource _audio;
     [SerializeField] private Game _game;
+    [SerializeField] private Aviaries _aviaries;
+
+    private bool _levelcompleted;
 
     private void OnEnable()
     {
-        _game.LevelCompleted += Play;
+        _game.LevelCompleted += Complete;
+        _aviaries.GoodAction += TryPlay;
     }
 
     private void OnDisable()
     {
-        _game.LevelCompleted -= Play;
+        _game.LevelCompleted -= Complete;
+        _aviaries.GoodAction += TryPlay;
     }
 
-    private void Play()
+    private void Complete()
     {
-        _audio.Play();
+        _levelcompleted = true;
     }
+
+    private void TryPlay()
+    {
+        if (_levelcompleted)
+            _audio.Play();
+    }
+
+
 }
