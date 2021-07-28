@@ -6,6 +6,7 @@ using UnityEngine.Events;
 public class Tutorial : MonoBehaviour
 {
     [SerializeField] private List<TutorialStage> _stages;
+    [SerializeField] private CanvasGroupPopUp _title;
 
     private int _currentIndex = -1;
 
@@ -52,7 +53,10 @@ public class Tutorial : MonoBehaviour
     private void Start()
     {
         if(DB.GetLevel() == 1)
+        {
+            _title.Show();
             TryNext();
+        }
     }
 
     private void OnStageCompleted(TutorialStage stage)
@@ -65,7 +69,15 @@ public class Tutorial : MonoBehaviour
     {
         _currentIndex++;
         if (_currentIndex >= _stages.Count)
-            Completed?.Invoke();
+        {
+            Win();
+        }
         StageChanged?.Invoke(_currentStage);
+    }
+
+    private void Win()
+    {
+        _title.Hide();
+        Completed?.Invoke();
     }
 }
