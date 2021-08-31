@@ -9,7 +9,7 @@ public class SpriteColorAnimation : MonoBehaviour
     [SerializeField] private float _cycleTime;
     [SerializeField] private float _showTime;
 
-    public float _alphaMult = 0;
+    private float _alphaMult;
     private SpriteRenderer _renderer;
     private Color _startColor;
     private float _timer;
