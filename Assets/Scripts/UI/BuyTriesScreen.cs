@@ -51,6 +51,10 @@ public class BuyTriesScreen : MonoBehaviour
                 });
             });
         });
+        _canvas.alpha = 1;
+        _input.IsON = false;
+        _canvas.interactable = true;
+        _canvas.blocksRaycasts = true;
     }
 
     public void Hide()
@@ -101,7 +105,7 @@ public class BuyTriesScreen : MonoBehaviour
 
     private void OnTriesChanged(int tries)
     {
-        if (tries == 0 && _tries.UsedAd == false)
+        if (tries == 0)
         {
             Appear(_level);
             _input.IsON = false;

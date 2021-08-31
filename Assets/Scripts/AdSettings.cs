@@ -4,21 +4,24 @@ using UnityEngine.Events;
 using AppodealAds.Unity.Api;
 using AppodealAds.Unity.Common;
 
-public class AdSettings : MonoBehaviour, IInterstitialAdListener, IBannerAdListener
+public class AdSettings : MonoBehaviour, IInterstitialAdListener, IBannerAdListener, IRewardedVideoAdListener
 {
     private const string AppKey = "07f6408b0529fe47a937f41594c0c040b08ccfb526cbf3cb";
 
     public event UnityAction InterstitialVideoShown;
+    public event UnityAction RewardedShown;
 
-    public bool CanShowInterstitial => Appodeal.canShow(Appodeal.INTERSTITIAL, "Levels") && !Appodeal.isPrecache(Appodeal.INTERSTITIAL);
+    public bool CanShowInterstitial => Appodeal.canShow(Appodeal.INTERSTITIAL, "Interstitial") && !Appodeal.isPrecache(Appodeal.INTERSTITIAL);
+    public bool CanShowRewarded => Appodeal.canShow(Appodeal.REWARDED_VIDEO, "Rewarded") && !Appodeal.isPrecache(Appodeal.REWARDED_VIDEO);
 
     private void Start()
     {
-        int adTypes = Appodeal.INTERSTITIAL | Appodeal.BANNER_BOTTOM;
+        int adTypes = Appodeal.INTERSTITIAL | Appodeal.BANNER_BOTTOM | Appodeal.REWARDED_VIDEO;
         Appodeal.initialize(AppKey, adTypes, true);
 
         Appodeal.setInterstitialCallbacks(this);
         Appodeal.setBannerCallbacks(this);
+        Appodeal.setRewardedVideoCallbacks(this);
     }
 
     private void AddReportEvent(string placement, string action = null)
@@ -33,14 +36,19 @@ public class AdSettings : MonoBehaviour, IInterstitialAdListener, IBannerAdListe
 
         AppMetrica.Instance.ReportEvent("ShowViewAd", eventParameters);
         eventParameters.Clear();
+        AppMetrica.Instance.SendEventsBuffer();
     }
 
     public void ShowInterstitial()
     {
-        if (Appodeal.canShow(Appodeal.INTERSTITIAL, "Levels") && !Appodeal.isPrecache(Appodeal.INTERSTITIAL))
-            Appodeal.show(Appodeal.INTERSTITIAL, "Levels");
-        else
-            InterstitialVideoShown?.Invoke();
+        if (CanShowInterstitial)
+            Appodeal.show(Appodeal.INTERSTITIAL, "Interstitial");
+    }
+
+    public void ShowRewarded()
+    {
+        if (CanShowRewarded)
+            Appodeal.show(Appodeal.REWARDED_VIDEO, "Rewarded");
     }
 
     public void ShowBanner()
@@ -75,7 +83,13 @@ public class AdSettings : MonoBehaviour, IInterstitialAdListener, IBannerAdListe
     public void onInterstitialShown()
     {
         InterstitialVideoShown?.Invoke();
-        AddReportEvent("Levels", "interstitial video shown");
+        Dictionary<string, object> eventParameters = new Dictionary<string, object>
+        {
+            { "Type", "Interstitial" }
+        };
+        AppMetrica.Instance.ReportEvent("AdWatched", eventParameters);
+        eventParameters.Clear();
+        AppMetrica.Instance.SendEventsBuffer();
     }
 
     public void onInterstitialClosed()
@@ -87,7 +101,6 @@ public class AdSettings : MonoBehaviour, IInterstitialAdListener, IBannerAdListe
     public void onInterstitialClicked()
     {
         Debug.Log("onInterstitialClicked");
-        AddReportEvent("Levels", "interstitial video clicked");
     }
 
     public void onInterstitialExpired()
@@ -121,6 +134,56 @@ public class AdSettings : MonoBehaviour, IInterstitialAdListener, IBannerAdListe
     public void onBannerExpired()
     {
         Debug.Log("onBannerExpired");
+    }
+
+    #endregion
+
+    #region RewardedCallbacks
+    public void onRewardedVideoLoaded(bool precache)
+    {
+        
+    }
+
+    public void onRewardedVideoFailedToLoad()
+    {
+        
+    }
+
+    public void onRewardedVideoShowFailed()
+    {
+        
+    }
+
+    public void onRewardedVideoShown()
+    {
+        
+    }
+
+    public void onRewardedVideoFinished(double amount, string name)
+    {
+        RewardedShown?.Invoke();
+        Dictionary<string, object> eventParameters = new Dictionary<string, object>
+        {
+            { "Type", "Rewarded" }
+        };
+        AppMetrica.Instance.ReportEvent("AdWatched", eventParameters);
+        eventParameters.Clear();
+        AppMetrica.Instance.SendEventsBuffer();
+    }
+
+    public void onRewardedVideoClosed(bool finished)
+    {
+        
+    }
+
+    public void onRewardedVideoExpired()
+    {
+        
+    }
+
+    public void onRewardedVideoClicked()
+    {
+        
     }
 
     #endregion

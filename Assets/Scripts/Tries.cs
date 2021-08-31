@@ -11,11 +11,11 @@ public class Tries : MonoBehaviour
     [SerializeField] private AdSettings _adSettings;
 
     private int _tries;
-    private bool _usedAd = false;
+    private int _usedAd = 0;
     private bool _AdActive;
 
     public int AdBuyAmount => _adBuyAmount;
-    public bool UsedAd => _usedAd;
+    public int UsedAd => _usedAd;
 
     public event UnityAction<int> TriesChanged;
 
@@ -23,14 +23,14 @@ public class Tries : MonoBehaviour
     {
         _game.LevelStarted += ResetTries;
         _aviaries.Interacted += Try;
-        _adSettings.InterstitialVideoShown += OnAddWatched;
+        _adSettings.RewardedShown += OnAddWatched;
     }
 
     private void OnDisable()
     {
         _game.LevelStarted -= ResetTries;
         _aviaries.Interacted -= Try;
-        _adSettings.InterstitialVideoShown -= OnAddWatched;
+        _adSettings.RewardedShown -= OnAddWatched;
     }
 
     private void OnAddWatched()
@@ -39,7 +39,7 @@ public class Tries : MonoBehaviour
             return;
         _tries += _adBuyAmount;
         TriesChanged?.Invoke(_tries);
-        _usedAd = true;
+        _usedAd++;
         _AdActive = false;
     }
 
@@ -51,12 +51,15 @@ public class Tries : MonoBehaviour
         {
             int level = DB.GetLevel();
             Dictionary<string, object> eventParameters = new Dictionary<string, object>
-            {
-                { "Level number",  level},
-            };
+        {
+            { "Level number",  level},
+            {"result",  "lose" },
+            {"continues" , _usedAd }
+        };
 
-            AppMetrica.Instance.ReportEvent("Lose", eventParameters);
+            AppMetrica.Instance.ReportEvent("Level Complete", eventParameters);
             eventParameters.Clear();
+            AppMetrica.Instance.SendEventsBuffer();
         }
     }
 
@@ -72,6 +75,6 @@ public class Tries : MonoBehaviour
     public void StartAD()
     {
         _AdActive = true;
-        _adSettings.ShowInterstitial();
+        _adSettings.ShowRewarded();
     }
 }

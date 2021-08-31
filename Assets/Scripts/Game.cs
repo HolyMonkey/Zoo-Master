@@ -18,6 +18,7 @@ public class Game : MonoBehaviour
     [SerializeField] private LevelDoneScreen _doneScreen;
     [SerializeField] private ParticleSystem[] _finishEffects;
     [SerializeField] private AdSettings _adSettings;
+    [SerializeField] private Tries _tries;
     [SerializeField] private List<LevelType> _levelTypes;
 
     private Aviary _lastAviary;
@@ -82,6 +83,17 @@ public class Game : MonoBehaviour
 
     public void Restart()
     {
+        int level = DB.GetLevel();
+        Dictionary<string, object> eventParameters = new Dictionary<string, object>
+        {
+            { "Level number",  level},
+            {"result",  "lose" },
+            {"continues" , _tries.UsedAd }
+        };
+
+        AppMetrica.Instance.ReportEvent("Level Complete", eventParameters);
+        eventParameters.Clear();
+        AppMetrica.Instance.SendEventsBuffer();
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
@@ -96,6 +108,13 @@ public class Game : MonoBehaviour
         var typeIndex = ((DB.GetLevel() - 1) / _levelsPerScene) % _levelTypes.Count;
         LevelStarted?.Invoke(_level, _levelTypes[typeIndex]);
         _net.BuildLevel(rows, cols);
+        Dictionary<string, object> eventParameters = new Dictionary<string, object>
+        {
+            { "Level number",  _level},
+        };
+
+        AppMetrica.Instance.ReportEvent("Level Started", eventParameters);
+        eventParameters.Clear();
     }
 
     private void OnInterstitialVideoShown()
@@ -168,10 +187,13 @@ public class Game : MonoBehaviour
         Dictionary<string, object> eventParameters = new Dictionary<string, object>
         {
             { "Level number",  level},
+            {"result",  "win" },
+            {"continues" , _tries.UsedAd }
         };
 
         AppMetrica.Instance.ReportEvent("Level Complete", eventParameters);
         eventParameters.Clear();
+        AppMetrica.Instance.SendEventsBuffer();
 
         yield return new WaitForSeconds(1f);
 
@@ -224,5 +246,20 @@ public class Game : MonoBehaviour
     private void ShowAd()
     {
             _adSettings.ShowInterstitial();
+    }
+
+    private void OnApplicationQuit()
+    {
+        int level = DB.GetLevel();
+        Dictionary<string, object> eventParameters = new Dictionary<string, object>
+        {
+            { "Level number",  level},
+            {"result",  "leave" },
+            {"continues" , _tries.UsedAd }
+        };
+
+        AppMetrica.Instance.ReportEvent("Level Complete", eventParameters);
+        eventParameters.Clear();
+        AppMetrica.Instance.SendEventsBuffer();
     }
 }

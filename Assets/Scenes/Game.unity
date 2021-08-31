@@ -2192,6 +2192,17 @@ CanvasGroup:
   m_Interactable: 0
   m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
+--- !u!114 &1304243823 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 236631743277222510, guid: aa173dd1ba8c4bc4e9e7de080eaa8ca2, type: 3}
+  m_PrefabInstance: {fileID: 236631744150535530}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60b2b03e78a726349b9af2ec9337be63, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1312319308 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8619183855664467685, guid: ec82ecb665643473a89dd4eeb14597be, type: 3}
@@ -3975,6 +3986,10 @@ PrefabInstance:
       propertyPath: _net
       value: 
       objectReference: {fileID: 1740958487}
+    - target: {fileID: 236631743277222505, guid: aa173dd1ba8c4bc4e9e7de080eaa8ca2, type: 3}
+      propertyPath: _tries
+      value: 
+      objectReference: {fileID: 1304243823}
     - target: {fileID: 236631743277222505, guid: aa173dd1ba8c4bc4e9e7de080eaa8ca2, type: 3}
       propertyPath: _pointer
       value: 

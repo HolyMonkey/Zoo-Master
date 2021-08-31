@@ -77,7 +77,7 @@ public class LoseScreen : MonoBehaviour
 
     private void OnTriesChanged(int tries)
     {
-        if (tries == 0 && _tries.UsedAd == true)
+        if (tries == 0 && false)
         {
             _canvas.interactable = true;
             _canvas.blocksRaycasts = true;
