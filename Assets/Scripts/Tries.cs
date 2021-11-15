@@ -8,7 +8,6 @@ public class Tries : MonoBehaviour
     [SerializeField] private Aviaries _aviaries;
     [SerializeField] private Game _game;
     [SerializeField] private int _adBuyAmount;
-    [SerializeField] private AdSettings _adSettings;
 
     private int _tries;
     private int _usedAd = 0;
@@ -23,14 +22,12 @@ public class Tries : MonoBehaviour
     {
         _game.LevelStarted += ResetTries;
         _aviaries.Interacted += Try;
-        _adSettings.RewardedShown += OnAddWatched;
     }
 
     private void OnDisable()
     {
         _game.LevelStarted -= ResetTries;
         _aviaries.Interacted -= Try;
-        _adSettings.RewardedShown -= OnAddWatched;
     }
 
     private void OnAddWatched()
@@ -56,10 +53,7 @@ public class Tries : MonoBehaviour
             {"result",  "lose" },
             {"continues" , _usedAd }
         };
-
-            AppMetrica.Instance.ReportEvent("Level Complete", eventParameters);
             eventParameters.Clear();
-            AppMetrica.Instance.SendEventsBuffer();
         }
     }
 
@@ -75,6 +69,5 @@ public class Tries : MonoBehaviour
     public void StartAD()
     {
         _AdActive = true;
-        _adSettings.ShowRewarded();
     }
 }

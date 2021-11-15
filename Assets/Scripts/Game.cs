@@ -17,7 +17,6 @@ public class Game : MonoBehaviour
     [SerializeField] private HandPointer _pointer;
     [SerializeField] private LevelDoneScreen _doneScreen;
     [SerializeField] private ParticleSystem[] _finishEffects;
-    [SerializeField] private AdSettings _adSettings;
     [SerializeField] private Tries _tries;
     [SerializeField] private List<LevelType> _levelTypes;
 
@@ -58,13 +57,10 @@ public class Game : MonoBehaviour
         _net.Deselected += OnDeselectedAnimals;
         _net.AnimalsChanged += OnAnimalsChanged;
         _combo.WillDisappear += DoneCombo;
-        _doneScreen.NextButtonClicked += ShowAd;
         foreach (var item in _aviaries)
         {
             item.GotAnimal += OnGotAnimal;
         }
-
-        _adSettings.InterstitialVideoShown += OnInterstitialVideoShown;
     }
 
     private void OnDisable()
@@ -73,12 +69,10 @@ public class Game : MonoBehaviour
         _net.Deselected -= OnDeselectedAnimals;
         _net.AnimalsChanged -= OnAnimalsChanged;
         _combo.WillDisappear -= DoneCombo;
-        _doneScreen.NextButtonClicked -= ShowAd;
         foreach (var item in _aviaries)
         {
             item.GotAnimal -= OnGotAnimal;
         }
-        _adSettings.InterstitialVideoShown -= OnInterstitialVideoShown;
     }
 
     public void Restart()
@@ -91,9 +85,7 @@ public class Game : MonoBehaviour
             {"continues" , _tries.UsedAd }
         };
 
-        AppMetrica.Instance.ReportEvent("Level Complete", eventParameters);
         eventParameters.Clear();
-        AppMetrica.Instance.SendEventsBuffer();
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
@@ -113,7 +105,6 @@ public class Game : MonoBehaviour
             { "Level number",  _level},
         };
 
-        AppMetrica.Instance.ReportEvent("Level Started", eventParameters);
         eventParameters.Clear();
     }
 
@@ -191,9 +182,7 @@ public class Game : MonoBehaviour
             {"continues" , _tries.UsedAd }
         };
 
-        AppMetrica.Instance.ReportEvent("Level Complete", eventParameters);
         eventParameters.Clear();
-        AppMetrica.Instance.SendEventsBuffer();
 
         yield return new WaitForSeconds(1f);
 
@@ -243,11 +232,6 @@ public class Game : MonoBehaviour
         _score.Increase(score);
     }
 
-    private void ShowAd()
-    {
-            _adSettings.ShowInterstitial();
-    }
-
     private void OnApplicationQuit()
     {
         int level = DB.GetLevel();
@@ -258,8 +242,6 @@ public class Game : MonoBehaviour
             {"continues" , _tries.UsedAd }
         };
 
-        AppMetrica.Instance.ReportEvent("Level Complete", eventParameters);
         eventParameters.Clear();
-        AppMetrica.Instance.SendEventsBuffer();
     }
 }

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657868, g: 0.49641508, b: 0.5748185, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657886, g: 0.49641556, b: 0.5748193, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -4421,7 +4421,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 59.55
+  m_fontSize: 70.6
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -4485,7 +4485,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _counter: {fileID: 1412609796}
   _text: {fileID: 1183940261}
-  _baseText: 'Tries '
 --- !u!198 &1184381044 stripped
 ParticleSystem:
   m_CorrespondingSourceObject: {fileID: 4618748630661412720, guid: cddd8f72749684a6c98ab93451ab3de8, type: 3}
@@ -4700,6 +4699,7 @@ GameObject:
   - component: {fileID: 1242235040}
   - component: {fileID: 1242235039}
   - component: {fileID: 1242235042}
+  - component: {fileID: 1242235043}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -4785,6 +4785,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _targetWidth: 17
+--- !u!114 &1242235043
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1242235038}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76c715ac06132e440ad953b0d81935ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  IsON: 1
 --- !u!224 &1317031404 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 2641468879573731005, guid: adefeb48a7ee24da5a49340b5022a880, type: 3}
@@ -5485,6 +5498,7 @@ MonoBehaviour:
   - {fileID: 1184381044}
   - {fileID: 1907487}
   _adSettings: {fileID: 203742414}
+  _tries: {fileID: 1412609796}
   _levelTypes:
   - {fileID: 11400000, guid: 162e7e2b9032193499889a81840bffcb, type: 2}
 --- !u!114 &1412609796
@@ -5501,6 +5515,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _aviaries: {fileID: 1081466865}
   _game: {fileID: 1412609795}
+  _adBuyAmount: 0
+  _adSettings: {fileID: 203742414}
 --- !u!1 &1430186142
 GameObject:
   m_ObjectHideFlags: 0
@@ -6377,6 +6393,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _game: {fileID: 1412609795}
+  _AnimalRatio: 0
 --- !u!114 &1740958487
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6394,6 +6411,7 @@ MonoBehaviour:
   _spawner: {fileID: 1740958486}
   _pointer: {fileID: 1071991832}
   _aviaries: {fileID: 1081466865}
+  _input: {fileID: 1242235043}
 --- !u!4 &1748715544 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1362175981961895789, guid: 6a14ab225f6df4c92a40ab7c67cbeb83, type: 3}
@@ -7463,8 +7481,11 @@ MonoBehaviour:
   _background: {fileID: 2071827184}
   _levetText: {fileID: 1775943731}
   _title: {fileID: 1037685537}
-  _score: {fileID: 1632937572}
+  _scorePopup: {fileID: 0}
+  _score: {fileID: 0}
+  _scoreText: {fileID: 0}
   _button: {fileID: 260891654}
+  _canvas: {fileID: 0}
 --- !u!1001 &2084798185
 PrefabInstance:
   m_ObjectHideFlags: 0
