@@ -19,8 +19,6 @@ public class LoseScreen : MonoBehaviour
     private Color _backColor;
     private int _level;
 
-    public event UnityAction NextButtonClicked;
-
     public void Appear(int level)
     {
         Color startColor = new Color(_backColor.r, _backColor.g, _backColor.b, 0);
@@ -34,7 +32,7 @@ public class LoseScreen : MonoBehaviour
         });
 
         float delay = 0.2f;
-        _levetText.Show("Level " + level.ToString());
+        _levetText.Show("Уровень " + level.ToString());
         _timer.WaitFor(delay).Then(() =>
         {
             _title.Show();

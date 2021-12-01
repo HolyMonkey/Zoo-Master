@@ -22,7 +22,7 @@ public class Game : MonoBehaviour
 
     private Aviary _lastAviary;
     private int _level;
-    private const int _levelsPerScene = 4;
+    private const int _levelsPerScene = 5;
     private bool _levelComplete;
 
     public event UnityAction<int, LevelType> LevelStarted;

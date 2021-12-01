@@ -36,7 +36,7 @@ public class BuyTriesScreen : MonoBehaviour
         });
 
         float delay = 0.2f;
-        _levetText.Show("Level " + level.ToString());
+        _levetText.Show("Уровень " + level.ToString());
         _timer.WaitFor(delay).Then(() =>
         {
             _title.Show();
@@ -44,7 +44,6 @@ public class BuyTriesScreen : MonoBehaviour
             {
                 _timer.WaitFor(delay * 2).Then(() =>
                 {
-                    _ad.Show();
                     _restart.Show();
                 });
             });

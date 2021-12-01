@@ -20,8 +20,6 @@ public class LevelDoneScreen : MonoBehaviour
     private IPromiseTimer _timer = new PromiseTimer();
     private Color _backColor;
 
-    public event UnityAction NextButtonClicked;
-
     public void Appear(int score, int level)
     {
         _canvas.interactable = true;
@@ -38,7 +36,7 @@ public class LevelDoneScreen : MonoBehaviour
         });
 
         float delay = 0.2f;
-        _levetText.Show("Level " + level.ToString());
+        _levetText.Show("Уровень " + level.ToString());
         _timer.WaitFor(delay).Then(() =>
         {
             _title.Show();
@@ -55,13 +53,11 @@ public class LevelDoneScreen : MonoBehaviour
 
     private void OnEnable()
     {
-        _button.GetComponent<Button>().onClick.AddListener(OnNextButtonClicked);
         _score.ScoreChanged += OnScoreChanged;
     }
 
     private void OnDisable()
     {
-        _button.GetComponent<Button>().onClick.RemoveListener(OnNextButtonClicked);
         _score.ScoreChanged -= OnScoreChanged;
     }
 
@@ -76,11 +72,6 @@ public class LevelDoneScreen : MonoBehaviour
     private void Update()
     {
         _timer.Update(Time.deltaTime);
-    }
-
-    private void OnNextButtonClicked()
-    {
-        NextButtonClicked?.Invoke();
     }
 
     private void OnScoreChanged(int score)
