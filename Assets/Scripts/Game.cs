@@ -91,9 +91,6 @@ public class Game : MonoBehaviour
 
     private void StartLevel()
     {
-        QualitySettings.vSyncCount = 0;
-        Application.targetFrameRate = 60;
-
         _level = DB.GetLevel();
         int rows = 1 + ((_level - 1) % _levelsPerScene + 1) * 2;
         int cols = 4;
