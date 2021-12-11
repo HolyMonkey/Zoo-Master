@@ -42,8 +42,10 @@ public class Net : MonoBehaviour
     {
         _timer.Update(Time.deltaTime);
 
+#if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.B))
             CalcMove(true, 0);
+#endif
 
         if (Input.GetKeyDown(KeyCode.W))
            StartCoroutine(ShowWave("spin", 0));

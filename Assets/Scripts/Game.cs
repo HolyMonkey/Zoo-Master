@@ -22,7 +22,7 @@ public class Game : MonoBehaviour
 
     private Aviary _lastAviary;
     private int _level;
-    private const int _levelsPerScene = 5;
+    private const int _levelsPerScene = 4;
     private bool _levelComplete;
 
     public event UnityAction<int, LevelType> LevelStarted;
@@ -45,10 +45,12 @@ public class Game : MonoBehaviour
             DB.ResetLevel();
             Debug.Log("Reset level!");
         }
+#if UNITY_EDITOR
         else if (Input.GetKeyDown(KeyCode.U))
         {
             StartCoroutine(FinishGame());
         }
+#endif
     }
 
     private void OnEnable()

@@ -12,6 +12,9 @@ public class CameraScaler : MonoBehaviour
     private void Awake()
     {
         _camera = GetComponent<Camera>();
+
+        if (_camera.aspect > 1)
+            this.enabled = false;
     }
 
     private void FixedUpdate()

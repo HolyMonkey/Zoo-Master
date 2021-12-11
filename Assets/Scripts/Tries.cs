@@ -59,7 +59,7 @@ public class Tries : MonoBehaviour
 
     private void ResetTries(int level, LevelType type)
     {
-        int rows = 1 + ((level - 1) % 5 + 1) * 2;
+        int rows = 1 + ((level - 1) % 4 + 1) * 2;
         _tries = rows * 2;
         if (DB.GetLevel() == 1)
             _tries = 9;
