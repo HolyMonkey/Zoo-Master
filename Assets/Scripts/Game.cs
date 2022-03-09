@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Events;
+using Agava.YandexGames;
 
 public class Game : MonoBehaviour
 {
@@ -19,6 +20,7 @@ public class Game : MonoBehaviour
     [SerializeField] private ParticleSystem[] _finishEffects;
     [SerializeField] private Tries _tries;
     [SerializeField] private List<LevelType> _levelTypes;
+    [SerializeField] private Leaderboard _totalScoreLeaderboard;
 
     private Aviary _lastAviary;
     private int _level;
@@ -185,24 +187,6 @@ public class Game : MonoBehaviour
 
         yield return new WaitForSeconds(1f);
 
-        //foreach (var item in _aviaries)
-        //{
-        //    int combo = item.ComboText.Value;
-        //    if (combo > 1)
-        //    {
-        //        int score = combo * 10;
-        //        item.ComboText.Reset();
-        //        item.PlayConfetti();
-        //        PopupText plusText = Instantiate(_plusTextPrefab, transform);
-        //        plusText.transform.position = item.ComboText.transform.position + Vector3.up * 100;
-        //        plusText.Show("+" + score.ToString());
-
-        //        StartCoroutine(MovePlusText(plusText, 1, score));
-
-        //        yield return new WaitForSeconds(0.2f);
-        //    }
-        //}
-
         foreach (var item in _finishEffects)
             item.Play();
 
@@ -210,6 +194,21 @@ public class Game : MonoBehaviour
         _doneScreen.Appear(_score.Value, _level);
         DB.AddScore(_score.Value);
         DB.IncreaseLevel();
+
+        Debug.Log(_score.Value);
+#if !UNITY_WEBGL || UNITY_EDITOR
+        yield break;
+#endif
+        Agava.YandexGames.Leaderboard.GetPlayerEntry(_totalScoreLeaderboard.Name, (result) =>
+        {
+            Debug.Log(_totalScoreLeaderboard.Name + ": result: ");
+            Debug.Log(result == null);
+            Debug.Log(" _score.value: " + _score.Value + " result.score: " + result.score);
+            if (result != null)
+                Agava.YandexGames.Leaderboard.SetScore(_totalScoreLeaderboard.Name, result.score + _score.Value);
+            else
+                Agava.YandexGames.Leaderboard.SetScore(_totalScoreLeaderboard.Name, _score.Value);
+        });
     }
 
     private IEnumerator MovePlusText(PopupText plusText, float delay, int score)

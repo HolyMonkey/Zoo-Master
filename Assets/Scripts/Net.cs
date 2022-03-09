@@ -79,6 +79,9 @@ public class Net : MonoBehaviour
     {
         if (Physics.Raycast(Camera.main.ScreenPointToRay(mousePosition), out RaycastHit hit, 1000))
         {
+            if (Time.timeScale == 0)
+                return;
+
             if (hit.transform.TryGetComponent(out Node node) && node.IsBusy)
             {
                 List<Node> nearAnimals = new List<Node>() { node };
