@@ -17,7 +17,8 @@ public class Leaderboard : MonoBehaviour
     [SerializeField] private Transform _container;
     [SerializeField] private GameObject _loginWindow;
     [SerializeField] private GameObject _requestDataWarning;
-    [SerializeField] private GameObject _leaderboard;
+    [SerializeField] private GameObject _leaderboardWindow;
+    [SerializeField] private EntryViewPool _playerEntriesViewPool;
 
     private List<EntryView> _entryViews = new List<EntryView>();
 
@@ -28,9 +29,19 @@ public class Leaderboard : MonoBehaviour
         YandexGamesSdk.CallbackLogging = true;
     }
 
+    private void OnEnable()
+    {
+        Time.timeScale = 0;
+    }
+
+    private void OnDisable()
+    {
+        Time.timeScale = 1;
+    }
+
     private IEnumerator Start()
     {
-        _leaderboard = this.gameObject;
+        _leaderboardWindow = this.gameObject;
 #if !UNITY_WEBGL || UNITY_EDITOR
         yield break;
 #endif
@@ -46,7 +57,6 @@ public class Leaderboard : MonoBehaviour
 
     public void UpdateLeaderboard()
     {
-
 #if !UNITY_WEBGL || UNITY_EDITOR
         return;
 #endif
@@ -56,42 +66,15 @@ public class Leaderboard : MonoBehaviour
             return;
         }
 
-        _leaderboard.SetActive(true);
-        Time.timeScale = 0;
+        _leaderboardWindow.SetActive(true);
+        
 
         if(!PlayerAccount.HasPersonalProfileDataPermission)
             _requestDataWarning.SetActive(true);
+        else
+            _requestDataWarning.SetActive(false);
 
-        Agava.YandexGames.Leaderboard.GetEntries(_name, (result) =>
-        {
-            foreach (var entryView in _entryViews)
-            {
-                Debug.Log(entryView);
-                Destroy(entryView.gameObject);
-            }
-            _entryViews.Clear();
-            foreach (var entry in result.entries)
-            {
-                string name = entry.player.publicName;
-                if (string.IsNullOrEmpty(name))
-                    name = "Anonymous";
-
-                EntryView entryView = Instantiate(_playerInfoTemplate, _container);
-                entryView.Init(entry.rank.ToString(), name, entry.score.ToString());
-
-                Agava.YandexGames.Leaderboard.GetPlayerEntry(_name, (playerEntry) =>
-                {
-                    string name = playerEntry.player.publicName;
-                    if (string.IsNullOrEmpty(name))
-                        name = "Anonymous";
-                    _playerEntryView.Init(playerEntry.rank.ToString(), name, playerEntry.score.ToString());
-
-                    if (entry == playerEntry)
-                        entryView.Background.gameObject.SetActive(true);
-                });
-                _entryViews.Add(entryView);
-            }
-        });
+        UpdateEntryViews();
     }
 
     public void OnRequestDataButtonDown()
@@ -104,8 +87,26 @@ public class Leaderboard : MonoBehaviour
         PlayerAccount.Authorize();
     }
 
-    public void UnpauseGame()
+    private void UpdateEntryViews()
     {
-        Time.timeScale = 1;
+        Agava.YandexGames.Leaderboard.GetEntries(_name, (result) =>
+        {
+            foreach (var entryView in _entryViews)
+                entryView.gameObject.SetActive(false);
+
+            _entryViews.Clear();
+            Agava.YandexGames.Leaderboard.GetPlayerEntry(_name, (playerEntry) =>
+            {
+                _playerEntryView.Init(playerEntry.rank.ToString(), playerEntry.player.publicName, playerEntry.score.ToString());
+            });
+
+            foreach (var entry in result.entries)
+            {
+                EntryView entryView = _playerEntriesViewPool.GetFreeObject();
+                entryView.Init(entry.rank.ToString(), entry.player.publicName, entry.score.ToString());
+                entryView.gameObject.SetActive(true);
+                _entryViews.Add(entryView);
+            }
+        });
     }
 }

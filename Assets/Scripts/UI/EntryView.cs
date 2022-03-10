@@ -18,8 +18,12 @@ public class EntryView : MonoBehaviour
 
     public void Init(string rank, string nickname, string score)
     {
+        if (string.IsNullOrEmpty(nickname))
+            _nickname.text = "Anonymous";
+        else
+            _nickname.text = nickname;
+           
         _rank.text = rank;
-        _nickname.text = nickname;
         _score.text = score;
     }
 
