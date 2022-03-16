@@ -44,6 +44,7 @@ public class CanvasGroupPopUp : MonoBehaviour
             yield return null;
             timer += Time.deltaTime;
         }
+        _canvas.alpha = target;
         TrySetInteractions(_active);
     }
 

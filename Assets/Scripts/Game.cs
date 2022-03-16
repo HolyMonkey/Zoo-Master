@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Events;
 using Agava.YandexGames;
+using UnityEngine.Analytics;
 
 public class Game : MonoBehaviour
 {
@@ -32,6 +33,7 @@ public class Game : MonoBehaviour
 
     private void Awake()
     {
+        AnalyticsEvent.debugMode = true;
         _doneScreen.gameObject.SetActive(true);
     }
 
@@ -96,6 +98,7 @@ public class Game : MonoBehaviour
     private void StartLevel()
     {
         _level = DB.GetLevel();
+        AnalyticsEvent.LevelStart(_level);
         int rows = 1 + ((_level - 1) % _levelsPerScene + 1) * 2;
         int cols = 4;
         var typeIndex = ((DB.GetLevel() - 1) / _levelsPerScene) % _levelTypes.Count;
@@ -175,6 +178,7 @@ public class Game : MonoBehaviour
 
     private IEnumerator FinishGame()
     {
+        AnalyticsEvent.LevelComplete(_level);
         int level = DB.GetLevel();
         Dictionary<string, object> eventParameters = new Dictionary<string, object>
         {
@@ -195,15 +199,11 @@ public class Game : MonoBehaviour
         DB.AddScore(_score.Value);
         DB.IncreaseLevel();
 
-        Debug.Log(_score.Value);
 #if !UNITY_WEBGL || UNITY_EDITOR
         yield break;
 #endif
         Agava.YandexGames.Leaderboard.GetPlayerEntry(_totalScoreLeaderboard.Name, (result) =>
         {
-            Debug.Log(_totalScoreLeaderboard.Name + ": result: ");
-            Debug.Log(result == null);
-            Debug.Log(" _score.value: " + _score.Value + " result.score: " + result.score);
             if (result != null)
                 Agava.YandexGames.Leaderboard.SetScore(_totalScoreLeaderboard.Name, result.score + _score.Value);
             else

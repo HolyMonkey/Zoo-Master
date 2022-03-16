@@ -10,6 +10,7 @@ public class PopupText : MonoBehaviour
     [SerializeField] private string[] _content;
     [SerializeField] private TMP_Text _text;
     [SerializeField] private float _appearPower = 2;
+    [SerializeField] private float _delay = 0;
 
     private Damping _dumping;
     private Coroutine _appearTask;
@@ -19,13 +20,19 @@ public class PopupText : MonoBehaviour
 
     private void Awake()
     {
-        _transform.localScale = Vector3.zero;
+        ResetLocalScale();
         _camera = Camera.main;
         _dumping = new Damping(0.5f, 3, 0, _appearPower);
     }
 
+    private void ResetLocalScale()
+    {
+        _transform.localScale = Vector3.zero;
+    }
+
     public void Show(string text = "")
     {
+        ResetLocalScale();
         if (text == "")
         {
             if (_content.Length > 0)
@@ -43,7 +50,7 @@ public class PopupText : MonoBehaviour
         if (_disappearDelayTask != null)
             StopCoroutine(_disappearDelayTask);
 
-        _appearTask = StartCoroutine(Appear());
+        _appearTask = StartCoroutine(AppearWithDelay());
         _disappearDelayTask = StartCoroutine(DisappearAfter());
     }
 
@@ -62,8 +69,9 @@ public class PopupText : MonoBehaviour
         _disappearTask = StartCoroutine(Disappear());
     }
 
-    private IEnumerator Appear()
+    private IEnumerator AppearWithDelay()
     {
+        yield return new WaitForSeconds(_delay);
         _transform.localScale = Vector3.zero;
 
         float duration = 0.5f;

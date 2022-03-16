@@ -15,10 +15,11 @@ public class Leaderboard : MonoBehaviour
     [SerializeField] private EntryView _playerInfoTemplate;
     [SerializeField] private EntryView _playerEntryView;
     [SerializeField] private Transform _container;
-    [SerializeField] private GameObject _loginWindow;
-    [SerializeField] private GameObject _requestDataWarning;
-    [SerializeField] private GameObject _leaderboardWindow;
+    [SerializeField] private ScreenAppear _leaderboardWindow;
+    [SerializeField] private ScreenAppear _loginWindow;
+    [SerializeField] private ScreenAppear _requestDataWarning;
     [SerializeField] private EntryViewPool _playerEntriesViewPool;
+
 
     private List<EntryView> _entryViews = new List<EntryView>();
 
@@ -27,26 +28,6 @@ public class Leaderboard : MonoBehaviour
     private void Awake()
     {
         YandexGamesSdk.CallbackLogging = true;
-    }
-
-    private void OnEnable()
-    {
-        Time.timeScale = 0;
-    }
-
-    private void OnDisable()
-    {
-        Time.timeScale = 1;
-    }
-
-    private IEnumerator Start()
-    {
-        _leaderboardWindow = this.gameObject;
-#if !UNITY_WEBGL || UNITY_EDITOR
-        yield break;
-#endif
-        // Always wait for it if invoking something immediately in the first scene.
-        yield return YandexGamesSdk.WaitForInitialization();
     }
 
     private void Update()
@@ -60,19 +41,19 @@ public class Leaderboard : MonoBehaviour
 #if !UNITY_WEBGL || UNITY_EDITOR
         return;
 #endif
+        Debug.Log(PlayerAccount.IsAuthorized);
         if (!PlayerAccount.IsAuthorized)
         {
-            _loginWindow.SetActive(true);
+            _loginWindow.Appear();
             return;
         }
 
-        _leaderboardWindow.SetActive(true);
-        
+        _leaderboardWindow.Appear();
 
-        if(!PlayerAccount.HasPersonalProfileDataPermission)
-            _requestDataWarning.SetActive(true);
+        if (!PlayerAccount.HasPersonalProfileDataPermission)
+            _requestDataWarning.Appear();
         else
-            _requestDataWarning.SetActive(false);
+            _requestDataWarning.Hide();
 
         UpdateEntryViews();
     }

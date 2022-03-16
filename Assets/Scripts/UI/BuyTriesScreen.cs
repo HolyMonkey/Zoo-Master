@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 using RSG;
+using UnityEngine.Analytics;
 
 public class BuyTriesScreen : MonoBehaviour
 {
@@ -44,6 +45,8 @@ public class BuyTriesScreen : MonoBehaviour
             {
                 _timer.WaitFor(delay * 2).Then(() =>
                 {
+                    _ad.Show();
+                    AnalyticsEvent.AdOffer(true);
                     _restart.Show();
                 });
             });
@@ -60,6 +63,12 @@ public class BuyTriesScreen : MonoBehaviour
         _input.IsON = true;
         _canvas.interactable = false;
         _canvas.blocksRaycasts = false;
+    }
+
+    public void HideThenStartAd()
+    {
+        Hide();
+        _tries.StartAD();
     }
 
     private IEnumerator HideSelf(float showTime)
@@ -104,6 +113,7 @@ public class BuyTriesScreen : MonoBehaviour
     {
         if (tries == 0)
         {
+            AnalyticsEvent.LevelFail(_level);
             Appear(_level);
             _input.IsON = false;
             _canvas.interactable = true;
