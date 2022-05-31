@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.Events;
 using Agava.YandexGames;
 using UnityEngine.Analytics;
+using Lean.Localization;
 
 public class Game : MonoBehaviour
 {
@@ -22,6 +23,7 @@ public class Game : MonoBehaviour
     [SerializeField] private Tries _tries;
     [SerializeField] private List<LevelType> _levelTypes;
     [SerializeField] private Leaderboard _totalScoreLeaderboard;
+    [SerializeField] private LeanToken _levelToken;
 
     private Aviary _lastAviary;
     private int _level;
@@ -98,6 +100,7 @@ public class Game : MonoBehaviour
     private void StartLevel()
     {
         _level = DB.GetLevel();
+        _levelToken.SetValue(_level);
         AnalyticsEvent.LevelStart(_level);
         int rows = 1 + ((_level - 1) % _levelsPerScene + 1) * 2;
         int cols = 4;

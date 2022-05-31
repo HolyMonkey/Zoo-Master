@@ -5,6 +5,7 @@ using UnityEngine.Events;
 using UnityEngine.UI;
 using RSG;
 using UnityEngine.Analytics;
+using Lean.Common;
 
 public class BuyTriesScreen : MonoBehaviour
 {
@@ -37,7 +38,7 @@ public class BuyTriesScreen : MonoBehaviour
         });
 
         float delay = 0.2f;
-        _levetText.Show("Уровень " + level.ToString());
+        //_levetText.Show("Уровень " + level.ToString());
         _timer.WaitFor(delay).Then(() =>
         {
             _title.Show();

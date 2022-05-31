@@ -50,7 +50,7 @@ public class Tries : MonoBehaviour
     private void OnAdRewarded()
     {
         AnalyticsEvent.AdComplete(true);
-        Debug.Log("OnAdRewarded");
+
         if (_AdActive == false)
             return;
         _tries += _adBuyAmount;
@@ -61,7 +61,6 @@ public class Tries : MonoBehaviour
 
     private void OnAdOpened()
     {
-        Debug.Log("OnAdOpened");
        AnalyticsEvent.AdStart(true);
     }
 
@@ -72,7 +71,6 @@ public class Tries : MonoBehaviour
 
     private void OnAdErrorOccured(string error)
     {
-        Debug.Log("OnAdErrorOccured: " + error);
         AnalyticsEvent.AdSkip(true);
         _adErrorScreen.Appear();
     }

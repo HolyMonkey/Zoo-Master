@@ -41,7 +41,6 @@ public class Leaderboard : MonoBehaviour
 #if !UNITY_WEBGL || UNITY_EDITOR
         return;
 #endif
-        Debug.Log(PlayerAccount.IsAuthorized);
         if (!PlayerAccount.IsAuthorized)
         {
             _loginWindow.Appear();
