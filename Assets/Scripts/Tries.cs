@@ -31,9 +31,7 @@ public class Tries : MonoBehaviour
     {
         _game.LevelStarted += ResetTries;
         _aviaries.Interacted += Try;
-        VideoAdClosed += OnAdClosed;
         VideoAdErrorOccurred += OnAdErrorOccured;
-        VideoAdOpened += OnAdOpened;
         VideoAdRewarded += OnAdRewarded;
     }
 
@@ -41,16 +39,12 @@ public class Tries : MonoBehaviour
     {
         _game.LevelStarted -= ResetTries;
         _aviaries.Interacted -= Try;
-        VideoAdClosed -= OnAdClosed;
         VideoAdErrorOccurred -= OnAdErrorOccured;
-        VideoAdOpened -= OnAdOpened;
         VideoAdRewarded -= OnAdRewarded;
     }
 
     private void OnAdRewarded()
     {
-        AnalyticsEvent.AdComplete(true);
-
         if (_AdActive == false)
             return;
         _tries += _adBuyAmount;
@@ -59,19 +53,8 @@ public class Tries : MonoBehaviour
         _AdActive = false;
     }
 
-    private void OnAdOpened()
-    {
-       AnalyticsEvent.AdStart(true);
-    }
-
-    private void OnAdClosed()
-    {
-        Debug.Log("OnAdClosed");
-    }
-
     private void OnAdErrorOccured(string error)
     {
-        AnalyticsEvent.AdSkip(true);
         _adErrorScreen.Appear();
     }
 

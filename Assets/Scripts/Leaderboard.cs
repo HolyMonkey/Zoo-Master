@@ -25,9 +25,14 @@ public class Leaderboard : MonoBehaviour
 
     public string Name => _name;
 
-    private void Awake()
+    private IEnumerator Start()
     {
+#if !UNITY_WEBGL || UNITY_EDITOR
+        yield break;
+#endif
         YandexGamesSdk.CallbackLogging = true;
+
+        yield return YandexGamesSdk.WaitForInitialization();
     }
 
     private void Update()

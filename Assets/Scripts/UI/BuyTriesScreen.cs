@@ -47,7 +47,6 @@ public class BuyTriesScreen : MonoBehaviour
                 _timer.WaitFor(delay * 2).Then(() =>
                 {
                     _ad.Show();
-                    AnalyticsEvent.AdOffer(true);
                     _restart.Show();
                 });
             });
@@ -114,7 +113,6 @@ public class BuyTriesScreen : MonoBehaviour
     {
         if (tries == 0)
         {
-            AnalyticsEvent.LevelFail(_level);
             Appear(_level);
             _input.IsON = false;
             _canvas.interactable = true;

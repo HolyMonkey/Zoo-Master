@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Events;
 using Agava.YandexGames;
+using Agava.YandexGames.Utility;
 using UnityEngine.Analytics;
 using Lean.Localization;
 
@@ -35,7 +36,6 @@ public class Game : MonoBehaviour
 
     private void Awake()
     {
-        AnalyticsEvent.debugMode = true;
         _doneScreen.gameObject.SetActive(true);
     }
 
@@ -99,9 +99,11 @@ public class Game : MonoBehaviour
 
     private void StartLevel()
     {
+#if !UNITY_EDITOR && UNITY_WEBGL
+        InterestialAd.Show();
+#endif
         _level = DB.GetLevel();
         _levelToken.SetValue(_level);
-        AnalyticsEvent.LevelStart(_level);
         int rows = 1 + ((_level - 1) % _levelsPerScene + 1) * 2;
         int cols = 4;
         var typeIndex = ((DB.GetLevel() - 1) / _levelsPerScene) % _levelTypes.Count;
@@ -181,7 +183,6 @@ public class Game : MonoBehaviour
 
     private IEnumerator FinishGame()
     {
-        AnalyticsEvent.LevelComplete(_level);
         int level = DB.GetLevel();
         Dictionary<string, object> eventParameters = new Dictionary<string, object>
         {
